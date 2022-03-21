@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://vozzware.com/security"
+	        xmlns:tns="http://vozzware.com/security"
+		    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		    elementFormDefault="qualified"
+		    attributeFormDefault="unqualified">
+
+  <xsd:complexType name="VwRole">
+	 <xsd:sequence>
+       <xsd:element name="privilegeGroupRef" type="tns:VwPrivilegeGroupRef" maxOccurs="unbounded"/>
+       <xsd:element name="privilegeRef" type="tns:VwPrivilegeRef" maxOccurs="unbounded"/>
+     </xsd:sequence>
+	<xsd:attribute name="name" type="xsd:string" use="required"/>
+	<xsd:attribute name="enabled" type="xsd:boolean" use="required"/>
+	
+  </xsd:complexType>
+
+ <xsd:complexType name="VwRoleRef">
+	<xsd:attribute name="ref" type="xsd:string" use="required" />
+  </xsd:complexType>
+
+  <xsd:complexType name="VwRoleGroup">
+	 <xsd:sequence>
+       <xsd:element name="roleRef" type="tns:VwRoleRef" maxOccurs="unbounded"/>
+     </xsd:sequence>
+	<xsd:attribute name="name" type="xsd:string" use="required"/>
+	<xsd:attribute name="enabled" type="xsd:boolean" use="required"/>
+	
+  </xsd:complexType>
+
+ <xsd:complexType name="VwPrivilegeGroup">
+	 <xsd:sequence>
+       <xsd:element name="privilegeRef" type="tns:VwPrivilegeRef" maxOccurs="unbounded"/>
+     </xsd:sequence>
+	<xsd:attribute name="name" type="xsd:string" use="required"/>
+	<xsd:attribute name="enabled" type="xsd:boolean" use="required"/>
+	
+  </xsd:complexType>
+
+ <xsd:complexType name="VwPrivilegeGroupRef">
+	<xsd:attribute name="ref" type="xsd:string" use="required" />
+  </xsd:complexType>
+
+ <xsd:complexType name="VwPrivilege">
+	<xsd:attribute name="name" type="xsd:string" use="required"/>
+	<xsd:attribute name="enabled" type="xsd:boolean" use="required"/>
+ </xsd:complexType>
+
+ <xsd:complexType name="VwPrivilegeRef">
+	<xsd:attribute name="ref" type="xsd:string" use="required" />
+  </xsd:complexType>
+	
+ <xsd:complexType name="VwSecurityMaster">
+	 <xsd:sequence>
+       <xsd:element name="privilege" type="tns:VwPrivilege" maxOccurs="unbounded"/>
+       <xsd:element name="privilegeGroup" type="tns:VwPrivilegeGroup" maxOccurs="unbounded"/>
+       <xsd:element name="role" type="tns:VwRole" maxOccurs="unbounded"/>
+       <xsd:element name="roleGroup" type="tns:VwRoleGroup" maxOccurs="unbounded"/>
+     </xsd:sequence>
+ 
+ </xsd:complexType>
+
+ <xsd:element name="SecurityMaster" type="tns:VwSecurityMaster"/>
+ 	
+</xsd:schema>

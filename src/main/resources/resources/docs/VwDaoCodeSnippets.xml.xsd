@@ -1,0 +1,14 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://vozzware.com/db/util" targetNamespace="http://vozzware.com/db/util">
+  <xsd:element name="codeSnippets" type="tns:CodeSnippets"/>
+  <xsd:complexType name="CodeSnippets">
+    <xsd:sequence>
+      <xsd:element name="snippet" type="tns:Snippet" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Snippet">
+    <xsd:sequence>
+      <xsd:element name="type" type="xsd:string"/>
+      <xsd:element name="code" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

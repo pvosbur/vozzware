@@ -1,0 +1,1 @@
+vwj com.vozzware.db.VwObjectSQLMapper %1 %2 %3

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menuSpec>
+	<menu name="File" type="menubar" >
+	  <menuItem name="${file.new}" >
+	    <menuitem id="newProject" name="${file.newProject}" tooltip="${file.newProject.tooltip}" mnemonic="${file.newProject.mne}"/>
+	    <menuitem id="newFolder" name="${file.newFolder}" tooltip="${file.newFolder.tooltip}" mnemonic="${file.newFolder.mne}"/>
+	    <menuitem id="newFile" name="${file.newFile}" tooltip="${file.newFile.tooltip}" mnemonic="${file.newFile.mne}"/>
+	  </menuItem>
+	  <menuItem id="open" name="${file.open}" tooltip="${file.open.tooltip}" mnemonic="${file.open.mne}" />
+	  <menuItem type="separator"/>
+	  <menuItem id="save" name="${file.save}" mnemonic="${file.save.mne}" />
+    <menuItem id="saveAs" name="${file.saveAs}" mnemonic="${file.saveAs.mne}" />
+    <menuItem id="saveAll" name="${file.saveAll}" mnemonic="${file.saveAll.mne}" />
+ 	  <menuItem type="separator"/>
+	  <menuItem id="print" name="${file.print}" mnemonic="${file.print.mne}" />
+ 	  <menuItem type="separator"/>
+ 	  <menuItem id="exit" name="${file.exit}" mnemonic="${file.exit.mne}" />
+  </menu> 
+  
+	<menu name="Edit" type="menubar" >
+	  <menuItem id="undo" name="${edit.undo}" mnemonic="${edit.undo.mne}" />
+ 	  <menuItem id="redo" name="${edit.redo}" mnemonic="${edit.redo.mne}" />
+	  <menuItem type="separator"/>
+	  <menuItem id="cut" name="${edit.cut}" mnemonic="${edit.cut.mne}" />
+ 	  <menuItem id="copy" name="${edit.copy}" mnemonic="${edit.copy.mne}" />
+ 	  <menuItem id="paste" name="${edit.paste}" mnemonic="${edit.paste.mne}" />
+	  <menuItem type="separator"/>
+	  <menuItem id="findReplace" name="${edit.findReplace}" mnemonic="${edit.findReplace.mne}" />
+  </menu>	  
+</menuSpec>

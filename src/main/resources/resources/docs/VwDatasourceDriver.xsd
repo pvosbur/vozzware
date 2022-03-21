@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://vozzware.com/db/util"
+	       	  xmlns:tns="http://vozzware.com/db/util"
+		        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		        elementFormDefault="qualified"
+		        attributeFormDefault="unqualified">
+	
+  <xsd:element name="DriverList" type="tns:VwDriverList"/>
+	
+		<xsd:complexType name="VwDriverList">
+			<xsd:sequence>
+				<xsd:element name="driver" maxOccurs="unbounded" type="tns:VwDriver"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	
+		<xsd:complexType name="VwDriver">
+			<xsd:sequence>
+			  <xsd:element name="connectionPool" maxOccurs="unbounded" type="tns:VwConnectionPool"/>
+				<xsd:element name="url" maxOccurs="unbounded" type="tns:VwUrl"/>
+		  </xsd:sequence>
+		  <xsd:attribute name="id" type="xsd:string"/>
+			<xsd:attribute name="driverClass" type="xsd:string"/>
+			<xsd:attribute name="msgXlateClass" type="xsd:string"/>
+			<xsd:attribute name="desc" type="xsd:string"/>
+			<xsd:attribute name="archive" type="xsd:string"/>
+			<xsd:attribute name="connectionTestTable" type="xsd:string"/>
+		</xsd:complexType>
+	
+		<xsd:complexType name="VwConnectionPool">
+			<xsd:attribute name="id" type="xsd:string"/>
+			<xsd:attribute name="min" type="xsd:string"/>
+			<xsd:attribute name="max" type="xsd:string"/>
+			<xsd:attribute name="uid" type="xsd:string"/>
+			<xsd:attribute name="pwd" type="xsd:string"/>
+		</xsd:complexType>
+
+		<xsd:complexType name="VwUrl">
+			<xsd:sequence>
+			  <xsd:element name="connectionProperty" maxOccurs="unbounded" type="tns:VwConnectionProperty"/>
+			</xsd:sequence>
+			<xsd:attribute name="id" type="xsd:string"/>
+			<xsd:attribute name="target" type="xsd:string"/>
+			<xsd:attribute name="pool" type="xsd:string"/>
+
+		</xsd:complexType>
+
+	<xsd:complexType name="VwConnectionProperty">
+		<xsd:attribute name="name" type="xsd:string"/>
+		<xsd:attribute name="value" type="xsd:string"/>
+	</xsd:complexType>
+
+</xsd:schema>

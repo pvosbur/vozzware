@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="VozzWorks" default="build" basedir=".">
+
+     <property file="${basedir}/build.properties" />
+     <property name="path.source" value="${basedir}/src" />
+     <property name="path.dist.lib" value="${path.vozzworksdist}/lib" />
+     <property name="path.junitdist.lib" value="${path.vozzjunitdist}/lib" />
+     <property name="path.docs" value="${path.vozzworksdist}/docs" />
+     <property name="resources.dir" value="/main/resources"/>
+
+     <property name="path.classes" value="${path.build}/classes" />
+     <property name="path.meta.inf" value="${path.build}/classes/META-INF" />
+     <property name="path.src.base" value="${path.build}/src/src" />
+     <property name="path.src" value="${path.src.base}/src" />
+     <property name="src.docs" value="./docs" />
+	   <property name="path.release.src" value="${path.release}/src" />
+	   <property name="path.release.bin" value="${path.release}/bin" />
+	   <property name="path.release.docs" value="${path.release}/docs" />
+	   <property name="release.license" value="${path.release}/license" />
+	   <property name="path.release.resource" value="${path.release}/resources" />
+	   <property name="path.release.lib" value="${path.release}/lib" />
+
+     <property name="path.license" value="${basedir}/license" />
+     <property name="releaseNbr" value="3.3.12" />
+     <property name="baseJarName" value="vozzworks" />
+     <property name="distJarName" value="${baseJarName}_${releaseNbr}.jar" />
+     <property name="path.vwweb" value="../VozzWorksWeb_3.0.3" />
+
+    <path id="path.class">
+      <fileset dir = "${path.runtime}" includes="*.jar,*.zip" excludes="${distJarName}"/>
+      <fileset dir = "${path.dist.lib}" includes="*.jar" />
+      <fileset dir = "${path.weblib}" includes="*.jar" />
+      <fileset dir = "${path.classes}" />
+     </path>
+
+    <path id="path.javadoc.class">
+      <fileset dir = "${path.dist.lib}" includes="*.jar" />
+     </path>
+
+    <path id="path.source">
+    	<dirset dir="${basedir}/src" >
+    	 <exclude name="test/**"/>
+    	</dirset>
+    </path>
+
+    <path id="javadoc.src">
+      <pathelement location="${basedir}/src" />
+    </path>
+
+    <target name="init" depends="clean">
+      <tstamp />
+
+      <mkdir dir="${path.build}"/>
+      <mkdir dir="${path.dist.lib}"/>
+      <mkdir dir="${path.meta.inf}"/>
+      <mkdir dir="${path.docs}"/>
+      <mkdir dir="${path.src}"/>
+      <mkdir dir="${path.src}"/>
+      <mkdir dir="${path.vozzworksdist}"/>
+    </target>
+
+    <target name="clean" description="Removes classses and javadoc">
+        <delete dir="${path.build}" />
+    </target>
+
+    <target name="cleanTest" depends="init" description="Removes classses and javadoc">
+    	<echo>Deleting ${path.build}</echo>
+
+        <delete dir="${path.build}" />
+    </target>
+
+    <target name="compile" depends="init" description="Compiles sources">
+    	<echo>Compiling VozzWorks ....</echo>
+
+        <mkdir dir="${path.classes}" />
+        <javac classpathref="path.class" destdir="${path.classes}" fork="false" debug="true"  optimize="true" failonerror="true" encoding="8859_1">
+        	<src path="./src"/>
+        	<exclude name="test/**"/>
+        	<exclude name="com/vw/print/**"/>
+
+        </javac>
+
+    </target>
+
+
+    <target name="build" depends="jar" description="Rebuilds project" >
+
+    </target>
+
+    <target name="jar" depends="compile" description="jar the classes dirs">
+       <echo>Building jar file: ${distJarName}</echo>
+        <copy todir="${path.classes}">
+            <fileset dir ="/main/resources" >
+              <include name="**/*.properties"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.xsd"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.gif"/>
+            </fileset>
+            <fileset dir ="${path.source}" >
+              <include name="**/*.properties"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.xsd"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.gif"/>
+            </fileset>
+        </copy>
+        <jar destfile="${path.dist.lib}/${distJarName}" basedir="${path.build}/classes" excludes="**/.dependency-info/**" />
+    	<copy todir="${path.runtime}" file="${path.dist.lib}/${distJarName}"/>
+    </target>
+
+	<target name="genDoc"  >
+	  <javadoc packagenames="com.vozzware.*"
+	           sourcepathref="javadoc.src"
+	  	       classpathref="path.javadoc.class"
+	           defaultexcludes="yes"
+	           destdir="${path.docs}"
+	           author="true"
+	           version="true"
+	           use="true"/>
+        <jar destfile="${path.vozzworksdist}/javadocs.zip" basedir="${path.docs}" />
+	      <tar tarfile="${path.vozzworksdist}/javadocs.tar" basedir="${path.docs}"/>
+        <gzip zipfile="${path.vozzworksdist}/javadocs.tar.gz" src="${path.vozzworksdist}/javadocs.tar"/>
+
+	</target>
+
+  <target name="makeSrc"  depends="genDoc" description="zip up the source and docs">
+
+		<delete dir="${path.src.base}"/>
+		<mkdir dir="${path.src.base}"/>
+		<mkdir dir="${path.src}"/>
+
+      <copy todir="${path.src}">
+          <fileset dir ="${basedir}/src" includes="**/*.*" />
+          <fileset dir ="${path.docs}" includes="javadocs.zip,javadocs.tar.gz" />
+          <fileset dir ="${basedir}" includes="build.xml" />
+      </copy>
+
+      <jar destfile="${path.vozzworksdist}/vwworkssrc.zip" basedir="${path.src.base}" excludes="**/.tar.*" />
+      <tar tarfile="${path.vozzworksdist}/vwworkssrc.tar" basedir="${path.src.base}" excludes="**/.zip"/>
+      <gzip zipfile="${path.vozzworksdist}/vwworkssrc.tar.gz" src="${path.vozzworksdist}/vwworkssrc.tar"/>
+
+ </target>
+
+  <target name="buildVwWeb">
+  	<ant antfile="${path.vwweb}/build.xml" target="buildAll" inheritall="false"/>
+  </target>
+
+	<target name="buildAll" depends="build,buildVwWeb,makeSrc" description="Builds everything with javadoc and source zip files"/>
+
+	<target name="release">
+		<delete dir="${path.release}"/>
+		<mkdir dir="${path.release}"/>
+    <mkdir dir="${path.release.src}" />
+    <mkdir dir="${path.release.bin}" />
+    <mkdir dir="${path.release.docs}" />
+    <mkdir dir="${release.license}" />
+    <mkdir dir="${path.release.lib}" />
+    <mkdir dir="${path.release.resource}" />
+
+    <copy todir="${path.release.src}">
+	        <fileset dir ="${path.vozzworks}" includes="vwworkssrc.zip,vwworkswebsrc.zip,vwworkssrc.tar.gz,vwworkswebsrc.tar.gz" />
+	    </copy>
+	    <copy todir="${path.release.src}">
+	         <fileset dir ="${path.vwjunitdist}" includes="vwjunitsrc.zip,vwjunitsrc.tar.gz" />
+	     </copy>
+
+	    <copy todir="${path.release.docs}">
+	        <fileset dir ="${path.vozzworks}" includes="docs.zip,docs.tar.gz" />
+	    </copy>
+	    <copy todir="${path.release.docs}">
+	        <fileset dir="${src.docs}" includes="*.pdf,*.htm*" />
+	    </copy>
+
+	    <!-- MAKE sure carriage return characters are removed from unix scripts -->
+	    <java classname="com.vozzware.util.VwDos2Unix">
+	      <arg value="./bin/vwj.sh"/>
+	      <classpath>
+	        <pathelement location="${path.dist.lib}/${distJarName}"/>
+	      </classpath>
+	    </java>
+
+	    <java classname="com.vozzware.util.VwDos2Unix">
+	       <arg value="./bin/sqlMapper.sh"/>
+	       <classpath>
+	         <pathelement location="${path.dist.lib}/${distJarName}"/>
+	       </classpath>
+	    </java>
+
+	    <java classname="com.vozzware.util.VwDos2Unix">
+	      <arg value="./bin/sqlBatch.sh"/>
+	      <classpath>
+	        <pathelement location="${path.dist.lib}/${distJarName}"/>
+	      </classpath>
+	    </java>
+
+	    <copy todir="${path.release.bin}">
+	      <fileset dir ="./bin" />
+	    </copy>
+		  <copy todir="${path.release.lib}">
+	      <fileset dir ="${path.dist.lib}" includes="${distJarName},vozzworksweb.jar,vwjunit.jar,vwjunit.war"/>
+	      <fileset dir ="${path.junitdist.lib}" includes="vwjunit.jar,vwjunit.war"/>
+	      <fileset dir ="${path.runtime}" includes="commons-beanutils.jar,commons-collections.jar,commons-digester.jar,commons-logging.jar,jsp-api.jar,servlet-api.jar,struts.jar,activation.jar,junit.jar,mail.jar,log4j-1.2.13.jar,xercesImpl.jar,xmlParserAPIs.jar"/>
+	     </copy>
+
+
+	    <copy todir="${path.release}">
+	      <fileset dir ="${src.docs}" includes="ReleaseNotes${releaseNbr}.html"/>
+	      <fileset dir ="${src.docs}" includes="vw*.txt"/>
+	    </copy>
+
+      <copy todir="${release.license}">
+           <fileset dir ="${path.license}" includes="*.txt"/>
+       </copy>
+
+      <jar destfile="${path.release}/vwworks${releaseNbr}.zip" basedir="${path.release}" excludes="**/*.tar*" />
+
+		  <tar  tarfile="${path.release}/vwworks${releaseNbr}.tar" basedir="${path.release}" excludes="**/*.zip"/>
+      <gzip zipfile="${path.release}/vwworks${releaseNbr}.tar.gz" src="${path.release}/vozzworks${releaseNbr}.tar"/>
+
+	</target>
+</project>
+

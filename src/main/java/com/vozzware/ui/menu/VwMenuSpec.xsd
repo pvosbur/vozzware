@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://itc.com/ui/menu/util"
+	       xmlns:tns="http://itc.com/ui/menu/util"
+		   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		   elementFormDefault="qualified"
+		   attributeFormDefault="unqualified">
+	
+  <xsd:element name="menuSpec" type="tns:VwXMLMenuSpec"/>
+	
+  <xsd:complexType name="VwXMLMenuSpec">
+
+	<xsd:sequence>
+	  <xsd:element name="menu" maxOccurs="unbounded" type="tns:VwXMLMenu"/>
+	</xsd:sequence>
+  </xsd:complexType>
+	
+  <xsd:complexType name="VwXMLMenu">
+	<xsd:sequence>
+	  <xsd:element name="menuItem" maxOccurs="unbounded" type="tns:VwXMLMenuItem"/>
+	</xsd:sequence>
+	
+	
+	<xsd:attribute name="name" type="xsd:string"/>
+	<xsd:attribute name="type" type="xsd:string"/>
+	<xsd:attribute name="pos" type="xsd:string"/>
+	
+	
+  </xsd:complexType>
+	
+  <xsd:complexType name="VwXMLMenuItem">
+    <xsd:sequence>
+	    <xsd:element name="menuItem" maxOccurs="unbounded" type="tns:VwXMLMenuItem"/>
+	  </xsd:sequence>
+  
+  
+	<xsd:attribute name="id" type="xsd:string"/>
+	<xsd:attribute name="name" type="xsd:string"/>
+	<xsd:attribute name="type" type="xsd:string"/>
+	<xsd:attribute name="icon" type="xsd:string"/>
+	<xsd:attribute name="enabled" type="xsd:boolean"/>
+	<xsd:attribute name="mnemonic" type="xsd:string"/>
+ 	<xsd:attribute name="toolTip" type="xsd:string"/>
+	<xsd:attribute name="accelerator" type="xsd:string"/>
+	  
+ </xsd:complexType>
+
+</xsd:schema>

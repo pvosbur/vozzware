@@ -1,0 +1,52 @@
+<codeSnippets>
+  <snippet>
+    <type>constructor</type>
+    <code><![CDATA[super( strDriverId, strUrlId, urlMappingDoc, loggerDb   );]]></code>
+  </snippet>
+  <snippet>
+    <type>reader</type>
+    <code><![CDATA[
+    URL urlClassgenSchema = VwResourceStoreFactory.getInstance().getStore().getDocument( "${xsdDocument}" );
+     
+    VwXmlToBean xtb = new VwXmlToBean();
+    ${anfFlag}    ${expandMacros}
+    return (${className})xtb.deSerialize( new InputSource( urlDoc.openStream() ), ${className}.class, urlClassgenSchema  );
+
+      ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>config</type>
+    <code><![CDATA[
+    URL urlSchemaXSD = VwResourceStoreFactory.getInstance().getStore().getDocument( "${xsdDocument}" );
+
+    VwBeanToXml btx = new VwBeanToXml( "<?xml version=\"1.0\"?>", null, true, 0 );
+    
+    if ( strCommentHeader != null )
+       btx.setDocumentCommentHeader( strCommentHeader );
+    
+    btx.addSchema( urlSchemaXSD, ${className}.class.getPackage() );
+    ${additionalSchemaList} ${anfFlag} ${contentMethdsList}
+    return btx;
+    
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>writeFile</type>
+    <code><![CDATA[
+    VwBeanToXml btx = config( strCommentHeader );
+    btx.serialize( null, objToWrite, fileToWrite  );
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>toString</type>
+    <code><![CDATA[
+    VwBeanToXml btx = config( strCommentHeader );
+    return btx.serialize( null, objToWrite );
+    ]]>
+    </code>
+  </snippet>
+  
+</codeSnippets>

@@ -1,0 +1,1231 @@
+/*
+============================================================================================
+ 
+                                Copyright(c) 2000 - 2006 by
+
+                       V o z z W a r e   L L C (Vw)
+
+                                   All Rights Reserved
+
+THIS PROGRAM IS PROVIDED UNDER THE TERMS OF THE Vozzware LLC PUBLIC LICENSE VER 1.0 (�AGREEMENT�),
+PROVIDED WITH THIS PROGRAM. ANY USE, REPRODUCTION OR DISTRIBUTION OF THE PROGRAM
+CONSTITUTES RECEIPIENTS ACCEPTANCE OF THIS AGREEMENT.
+
+Source Name: VwLogger.java
+
+============================================================================================
+*/
+
+package com.vozzware.util;
+
+import org.apache.log4j.Appender;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
+import org.apache.log4j.net.SMTPAppender;
+import org.apache.log4j.net.SocketAppender;
+import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.spi.TriggeringEventEvaluator;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+
+/**
+ * @author P. VosBurgh
+ * 
+ * This class wraps the log4j Logger for easy custom configuring and message generation. This call manages loggers with
+ * <br>different configurations based on the instance name passed to getIntance. If the instance name is a properties file
+ * <br>then the logger is configured based on the property file settings. When getInstance( "myname" ) method is invoked
+ * <br>VwLogger checks to see if a logger instance already exists for that name and it returns that instance if it exists.
+ * <br>Otherwise it is configured and then cached by that name. 
+ * <br>The following properties are recognized:
+ * <br>vw.log4j.msgPattern The log4j messagepattern to use for any appender created
+ * <br>vw.log4j.sendToConsole if true create a console appender
+ * <br>vw.log4j.level one of debug,info,warn,error or fatal values
+ * <br>vw.log4j.debugVerboseLevel  sets a user assign debug verbose level that can be reference by any classes using the the logger to determine how debug data to dump
+ * <br>vw.log4j.logfile The path and name to a logi file
+ * <br>vw.log4j.logfilePattern The pattern to use for this log file
+ * <br>vw.log4j.rollingLogfile The path and name to a rolling log file log file
+ * <br>vw.log4j.rollingLogfileSize The max size in bytes before the file rolls
+ * <br>vw.log4j.rollingLogfilePattern The pattern to use for this rolling log file
+ * <br>vw.log4j.rollingLogfileMaxFiles The Maimum files to create when rolling over - default is 1
+ * <br>The following properties ending in the {n} represent numbered files so that more than one file appender can be defined.
+ * <br>Replace the {n} with a number starting with 1 i.e. vw.log4j.logfile1, vw.log4j.logfile2... etc
+ * <br>vw.log4j.logfile{n}
+ * <br>vw.log4j.logfilePattern{n}
+ * <br>vw.log4j.rollingLogfile{n}
+ * <br>vw.log4j.rollingLogfileSize{n}
+ * <br>vw.log4j.rollingLogfilePattern{n}
+ * <br>vw.log4j.useEmail if true create an email appender
+ * <br>vw.log4j.emailLevel The level threshhold wich will cause an email to be sent
+ * <br>vw.log4j.emailRecipientList The mail receipient list
+ * <br>vw.log4j.emailSubject The subject on the eanil
+ * <br>vw.log4j.emailFrom the from email address
+ * <br>vw.log4j.smtp.host The smtp host used to send the email
+ * <br>vw.log4j.socketConnectAddress Specifies that a SocketAppender should be added using the host address specified
+ * <br>vw.log4j.socketConnectPort Specifies port number of the listening host
+ * <br>vw.log4j.custAppenderClass The fully qualified name of the custom appender class to create (It must be in the classpath)
+ * <br>vw.log4j.custAppenderPattern The pattern to use for this appender
+ * <br>vw.log4j.custAppenderName The name for this appender
+ * <br>vw.log4j.custAppenderPropName{n} The name of a appender property to set
+ * <br>vw.log4j.custAppenderPropValue{n} The value of a appender property to set
+ * <br>The following properties ending in the {n} represent numbered files so that more than one file appender can be defined.
+ * <br>Replace the {n} with a number starting with 1 i.e. vw.log4j.logfile1, vw.log4j.logfile2... etc
+ * <br>vw.log4j.custAppenderClass{n}
+ * <br>vw.log4j.custAppenderPattern{n}
+ * <br>vw.log4j.custAppender{n}PropName{n}
+ * <br>vw.log4j.custAppender{n}PropValue{n}
+
+ *
+ */
+
+public class VwLogger
+{
+  private static VwLogger s_instance = null;                    // default if no property file is specified
+
+  private Logger  m_logger;                                       // The log4j Logger instance
+
+  private String  m_strInstanceName;
+
+  private static  String    s_strDefaultPattern = "%-5p [%d]: %m\n"; // The default message pattern
+
+  private static  Map<String,Level> s_mapLevels = new HashMap<String,Level>();
+
+  private static  Map<String,VwLogger> s_mapInstances = Collections.synchronizedMap( new HashMap<String,VwLogger>() );
+
+  private Level   m_levelEmail = null;  // Level threshold to send email notification
+
+  private String  m_strPropName;
+
+
+  private int     m_nVerboseLevel = 1;
+
+  static
+  {
+    s_mapLevels.put( "trace", Level.TRACE );
+    s_mapLevels.put( "debug", Level.DEBUG );
+    s_mapLevels.put( "info", Level.INFO );
+    s_mapLevels.put( "warn", Level.WARN );
+    s_mapLevels.put( "error", Level.ERROR );
+    s_mapLevels.put( "fatal", Level.FATAL );
+
+  }
+
+  class FileSpec
+  {
+    String  m_strName;
+    String  m_strPattern;
+    long    m_lMaxRolloverSize;
+    int    m_nMaxFiles = 1;
+
+    FileSpec( String strName, String strPattern )
+    {
+      m_strName = strName;
+      m_strPattern = strPattern;
+    }
+
+    FileSpec( String strName, String strPattern, long lMaxRolloverSize, int nMaxFiles )
+    {
+      m_strName = strName;
+      m_strPattern = strPattern;
+      m_lMaxRolloverSize = lMaxRolloverSize;
+      m_nMaxFiles = nMaxFiles;
+    }
+
+  } // end class FileSpec
+
+
+  public VwLogger()
+  {
+    return;
+  }
+  /**
+   * Singleton constructor - configures logger from vw.properties
+   * @throws Exception
+   */
+  private VwLogger( String strPropFileName )
+  {
+    
+    String strLoggerName = strPropFileName;
+    
+    m_strPropName = strPropFileName;
+    
+    if ( strPropFileName == null )
+    {
+      strLoggerName = "VwLogger.class";
+    }
+    
+    m_logger = Logger.getLogger( strLoggerName );
+
+    m_logger.removeAllAppenders();
+    m_logger.getParent().removeAllAppenders();
+
+    File fileLog4j = null;
+
+    // If no .properties instance name specified, see if the default log4j.properties or log4j.xml is in the classpath
+    // and configure logger from them if they are
+    
+    if ( strPropFileName != null && strPropFileName.equalsIgnoreCase( "log4j" ) )
+    {
+      
+      try
+      {
+        fileLog4j =  VwDocFinder.find( "log4j.properties" );
+        
+        if ( fileLog4j == null )
+        {
+          fileLog4j =  VwDocFinder.find( "log4j.xml" );
+        }
+
+        if ( fileLog4j != null )
+        {
+          return;
+        }
+        
+        configureDefaults( null );
+
+      }
+      catch( Exception ex )
+      {
+        ex.printStackTrace();
+      }
+      
+    
+    }
+    
+    if ( strPropFileName != null && strPropFileName.endsWith( ".properties" ))
+    {
+    
+      try
+      {
+        
+        VwResourceMgr.loadProperties( strPropFileName, true );
+        configureFromProps();
+        
+      }
+      catch( Exception ex )
+      {
+        configureDefaults( ex );
+        return;
+      }
+    
+    }
+    else
+    {
+      configureDefaults( null );
+    }
+
+  } // end VwLogger()
+
+  /**
+   * Returns the verbose level of the logger
+   * @return
+   */
+  public int getDebugVerboseLevel()
+  {
+    return m_nVerboseLevel;
+  }
+
+
+  /**
+   * Sets the logger debug verbose level
+   *
+   * @param nVerboseLevel the verbose level can be an integer from 1 to 3
+   */
+  public void setDebugVerboseLevel( int nVerboseLevel )
+  {
+    m_nVerboseLevel = nVerboseLevel;
+
+  }
+
+  /**
+   * Gets the instance name of this logger instance
+   * @return
+   */
+  public String getInstanceName()
+  {
+    return m_strInstanceName;
+  }
+
+
+  public void setInstanceName( String strInstanceName )
+  {
+    m_strInstanceName = strInstanceName;
+
+  }
+
+  /**
+   * Gets the singlton instance with the default confuration that only has a console sppender and sets the out level
+   * to debug (the lowest)
+   * 
+   * @return The default singleton instance
+   * @throws Exception
+   */
+  public synchronized static VwLogger getInstance()
+  { return getInstance( null );  } 
+  
+  /**
+   * Gets the instance based on the instance name passed. If a logger exists with this name then that instance is returnd.
+   * <br>If the instance name is a property file i.e. any name ending in .properties,
+   * <br>then the logger will be configured according to the property specifications.
+   * 
+   * @return The logger instance assigned to the instance name.
+   * 
+   * @throws Exception If a properties file is specified
+   */
+  public synchronized static VwLogger getInstance( String strInstanceName )
+  {
+    VwLogger logger = null;
+    
+    if ( strInstanceName != null )
+    {
+      logger = (VwLogger)s_mapInstances.get( strInstanceName );
+    }
+    else
+    {
+      logger = (VwLogger)s_mapInstances.get( "DEFAULT" );
+    }
+    
+    if ( logger == null )
+    {
+      logger = new VwLogger( strInstanceName );
+      
+      if ( strInstanceName != null )
+      {
+        s_mapInstances.put( strInstanceName, logger );
+      }
+      else
+      {
+        s_mapInstances.put( "DEFAULT", logger );
+      }
+        
+    }
+
+    logger.setInstanceName( strInstanceName );
+
+    return logger;
+    
+  } // end getInstance()
+
+
+  /**
+   * Clear all logs created with VwLogger
+   * @throws Exception
+   */
+  public static void clearAll() throws Exception
+  {
+    Set<String> listInstanceNames = getInstanceNames();
+
+    if ( listInstanceNames == null )
+    {
+      return;
+    }
+
+    Collection<VwLogger> loggers = getLoggerInstances();
+
+    if ( loggers == null )
+    {
+      return;
+
+    }
+
+    for ( VwLogger logger :  loggers )
+    {
+      logger.clearLog();
+    }
+  }
+
+
+  /**
+   *  Clears the log file associated with this logger instance. It sets the file length to zero bytes.
+   *  <br/>if  any rolling logs are available(i.e. mylog.log, mylog.log.1, mylog.log.2 ..., then those are deleted
+   *
+    * @throws Exception if any file io errors occur
+   */
+  public void clearLog() throws Exception
+  {
+
+    Enumeration<Appender>eAppenders = this.m_logger.getAllAppenders();
+    {
+      while ( eAppenders.hasMoreElements() )
+      {
+        Appender app = eAppenders.nextElement();
+
+        // Look for file appenders
+        if ( app instanceof FileAppender )
+        {
+          FileAppender fileApp = (FileAppender)app;
+
+          String strFile = fileApp.getFile();
+
+          int nPos = strFile.lastIndexOf( '/' );
+
+          String strDirPath = strFile.substring( 0, nPos );
+
+          File fileDir = new File( strDirPath );
+          File[] aLogFiles = fileDir.listFiles();
+
+          if ( aLogFiles == null )
+          {
+            return;
+
+          }
+
+
+          for ( int x = 0; x < aLogFiles.length; x++ )
+          {
+            // If file is an exact match, then truncate it
+            if ( aLogFiles[ x ].getAbsolutePath().equals( strFile ) )
+            {
+              RandomAccessFile file = new RandomAccessFile( aLogFiles[ x ], "rw" );
+              file.setLength( 0 );
+              file.close();
+            }
+            else
+            if ( aLogFiles[ x ].getAbsolutePath().startsWith( strFile ) ) // this is a rolling file extension so delete it
+            {
+              aLogFiles[ x ].delete();
+            }
+          }
+
+        }  // end if
+
+      }  // end while
+    } // end enumeration
+  }
+
+
+  /**
+   * Enable/Disable the console display
+   *
+   * @param fEnable true to enable false to disable
+   */
+  public void enableConsole( boolean fEnable )
+  {
+    Enumeration<Appender>eRootAppenders = Logger.getRootLogger().getAllAppenders();
+        
+    while ( eRootAppenders.hasMoreElements() )
+    {
+      Appender app = eRootAppenders.nextElement();
+      if ( app instanceof ConsoleAppender )
+      {
+         if ( !fEnable )
+        {
+          Logger.getRootLogger().removeAppender( app );
+          break;
+        }
+        
+      }
+    }
+
+    Enumeration<Appender>eAppenders = m_logger.getAllAppenders();
+    
+    boolean fFound = false;
+    
+    while ( eAppenders.hasMoreElements() )
+    {
+      Appender app = eAppenders.nextElement();
+      if ( app instanceof ConsoleAppender )
+      {
+        fFound = true;
+        if ( !fEnable )
+        {
+          m_logger.removeAppender( app );
+          return;
+        }
+        
+      }
+    }
+    
+    if ( fEnable && !fFound )
+    {
+      m_logger.addAppender( new ConsoleAppender( new PatternLayout( s_strDefaultPattern ) ) );
+    }
+
+  }
+  /**
+   * Returns a set of all the logger instances names configured with this class
+   * @return
+   */
+  public static Set<String>getInstanceNames()
+  {
+    return s_mapInstances.keySet();
+    
+  }
+
+  /**
+   * Returns a set of all the logger instances configured with this class
+   * @return
+   */
+  public static Collection<VwLogger>getLoggerInstances()
+  {
+    return s_mapInstances.values();
+    
+  }
+
+  /**
+   * Sets the default message layout string used when creating appenders
+   * @param strDefaultPattern The log4j pattern string
+   */
+  public static void setDefaultPattern( String strDefaultPattern )
+  { s_strDefaultPattern = strDefaultPattern; }
+  
+  
+  /**
+   * Gets the default log4j pattern string
+   * @return The pattern layout string
+   */
+  public static String getDefaultPattern()
+  { return s_strDefaultPattern; }
+  
+  /**
+   * Adds a log file appender to this logger instance, with the user specified pattren layou string.
+   * <br>Please see the log4j doc on the format of the pattern layout characters.
+   * 
+   * @param fileLog The file object containing the path and name of the log file to use
+   * @throws Exception if the file specified cannot be created
+   */
+  public void addLogFile( File fileLog, String strPatternLayout ) throws Exception
+  { m_logger.addAppender( new FileAppender( new PatternLayout( strPatternLayout ), fileLog.getAbsolutePath() )); }
+
+  /**
+   * Adds a log file appender to this logger instance useing the defauly pattern string of %-5p [%d]: %m\n.
+   * <br>Please see the log4j doc for the pattern specifiers and their meaning.
+   * 
+   * @param fileLog The file object containing the path and name of the log file to use
+   * 
+   * @throws Exception if the file specified cannot be created
+   */
+  public void addRollingLogFile( File fileLog, long lMaxFileSize  ) throws Exception
+  { 
+    RollingFileAppender rfa = new RollingFileAppender( new PatternLayout( s_strDefaultPattern ), fileLog.getAbsolutePath() );
+    rfa.setMaximumFileSize( lMaxFileSize );
+    rfa.setMaxBackupIndex( 100 );
+    m_logger.addAppender( rfa );
+  }
+  
+
+  /**
+   * Adds a log file appender to this logger instance, with the user specified pattren layou string.
+   * <br>Please see the log4j doc on the format of the pattern layout characters.
+   * 
+   * @param fileLog The file object containing the path and name of the log file to use
+   * @throws Exception if the file specified cannot be created
+   */
+  public void addRollingLogFile( File fileLog, String strPatternLayout, long lMaxFileSize ) throws Exception
+  { 
+    RollingFileAppender rfa = new RollingFileAppender( new PatternLayout( strPatternLayout ), fileLog.getAbsolutePath() );
+    rfa.setMaximumFileSize( lMaxFileSize );
+    
+    m_logger.addAppender( rfa );
+    
+  }
+
+  /**
+   * Adds a log file appender to this logger instance useing the defauly pattern string of %-5p [%d]: %m\n.
+   * <br>Please see the log4j doc for the pattern specifiers and their meaning.
+   * 
+   * @param fileLog The file object containing the path and name of the log file to use
+   * 
+   * @throws Exception if the file specified cannot be created
+   */
+  public void addLogFile( File fileLog ) throws Exception
+  { m_logger.addAppender( new FileAppender( new PatternLayout( s_strDefaultPattern ), fileLog.getAbsolutePath() ));  }
+  
+  
+  /**
+   * Adds a new appender to this logger instance
+   * 
+   * @param appender The Appender to add
+   */
+  public void addAppender( Appender appender )
+  {  m_logger.addAppender( appender ); }
+  
+  /**
+   * Remove an appender by its name
+   * @param name
+   */
+  public void removeAppender( String name )
+  {	 m_logger.removeAppender(name); }
+
+  
+  /**
+   * Remove all appenders from this logger instance
+   */
+  public void removeAllAppenders()
+  {	m_logger.removeAllAppenders(); }
+  
+  /**
+   * Returns an enumeration of all appenders for this logger instance
+   * @return
+   */
+  public Enumeration<Appender>getAppenders()
+  { return m_logger.getAllAppenders(); }
+  
+  /**
+   * Close the named appender and remove it from the list
+   * @param strNameToRemove
+   */
+  public void closeAppender( String strNameToRemove )
+  {
+    Enumeration<Appender>eAppenders = getAppenders();
+    
+    while (  eAppenders.hasMoreElements())
+    {
+      Appender appender = eAppenders.nextElement();
+      String strName = appender.getName();
+      if ( strName != null && strName.equalsIgnoreCase( strNameToRemove ))
+      {
+        appender.close();
+        m_logger.removeAppender( appender );
+        return;
+      }
+     }
+    
+  }
+
+  /**
+   * Returns true if an appender exists by the name supplied
+   * @param strApprnderName The name of the appender to search for (case insensitive)
+   * @return true if the named appender exists, false otherwise
+   */
+  public boolean appenderExists( String strApprnderName )
+  {
+    Enumeration<Appender>eAppenders = getAppenders();
+    
+    while (  eAppenders.hasMoreElements())
+    {
+      Appender appender = eAppenders.nextElement();
+      String strName = appender.getName();
+      if ( strName != null && strName.equalsIgnoreCase( strApprnderName ))
+        return true;
+    }
+    
+    return false;
+    
+  }
+  /**
+   * Sets the new level for controlling output
+   * @param level
+   */
+  public void setLevel( Level level )
+  { m_logger.setLevel( level ); }
+
+
+  /**
+   * Sets the log level using string representation must be one of "info|debug|error|fatal|warn|trace"
+   *
+   * @param strLogLevel The log level as a string
+   */
+  public void setLevelAsString( String strLogLevel )
+  { m_logger.setLevel( s_mapLevels.get( strLogLevel.toLowerCase() ) ); }
+
+
+  /**
+   * Gets the logging level currently in effect
+   * @return
+   */
+  public Level getLevel()
+  { return m_logger.getLevel(); }
+  
+
+  public String getLevelAsString()
+  {
+    return m_logger.getLevel().toString();
+  }
+
+  /**
+   * Returns true if the debug level is in effect
+   * @return
+   */
+  public boolean isDebugEnabled()
+  { return m_logger.isDebugEnabled(); }
+  
+
+  /**
+   * Restores the logger to its initial settings. If a property file was specified, it re-installs the appenders
+   * <br>according to the property file settings else the standard default configuration is used.
+   *
+   */
+  public void restore() throws Exception
+  {
+    m_logger.removeAllAppenders();
+    
+    if ( m_strPropName == null )
+      configureDefaults( null );
+    
+    configureFromProps();
+    
+  } // end restore()
+
+  
+  /**
+   * Setup appenders from the property file specification
+   *
+   */
+  private void configureFromProps() throws Exception
+  {
+    
+    Logger.getRootLogger().removeAllAppenders();
+    m_logger.removeAllAppenders();
+
+    String strPatternLayout = VwResourceMgr.getString( "vw.log4j.msgPattern", s_strDefaultPattern );
+    boolean fUseConsole = VwResourceMgr.getBoolean( "vw.log4j.sendToConsole", false );
+    
+    PatternLayout pattern = new PatternLayout( strPatternLayout );
+    
+    
+    if ( fUseConsole )
+    {
+      m_logger.addAppender( new ConsoleAppender( pattern ) );
+    }
+
+    m_nVerboseLevel =  VwResourceMgr.getInt( "vw.log4j.debugVerboseLevel", 1 );
+
+    List<FileSpec> listLogFiles = new ArrayList<FileSpec> ();
+    List<FileSpec> listRollingLogFiles = new ArrayList<FileSpec> ();
+    
+    // Get list of all file appenders specified
+    
+    String strLogFile = VwResourceMgr.getString( "vw.log4j.logfile", (String)null );
+    String strLogFilePattern = VwResourceMgr.getString( "vw.log4j.logfilePattern", (String)null );
+    
+    if ( strLogFile != null )
+    {
+      listLogFiles.add(  new FileSpec( strLogFile, strLogFilePattern ) );
+    }
+    
+    // see if numbered log files exist
+    int x = 0;
+    
+    while( true )
+    {
+      x++;
+      strLogFile = VwResourceMgr.getString( "vw.log4j.logfile" + x, (String)null );
+      
+      if ( strLogFile == null )
+      {
+        break;
+      }
+      
+      strLogFilePattern = VwResourceMgr.getString( "vw.log4j.logfilePattern" + x, (String)null );
+      listLogFiles.add(  new FileSpec( strLogFile, strLogFilePattern ) );
+      
+    }
+    
+    String strRollOverLogFile = VwResourceMgr.getString( "vw.log4j.rollingLogfile", (String)null );
+    String strFileSize = VwResourceMgr.getString( "vw.log4j.rollingLogfileSize", (String)null );
+    String strRollOverPattern = VwResourceMgr.getString( "vw.log4j.rollingLogfilePattern", (String)null );
+    String strRollOverMaxFiles = VwResourceMgr.getString( "vw.log4j.rollingLogfileMaxFiles", (String)null );
+
+    long lMaxFileSize = 1024000;
+    if ( strFileSize != null )
+    {
+      if ( VwExString.isIntegral( strFileSize, true ))
+      {
+        lMaxFileSize = Long.parseLong( strFileSize  );
+      }
+      else
+      {
+        if ( !m_logger.getAllAppenders().hasMoreElements())
+        {
+          m_logger.addAppender( new ConsoleAppender( pattern ) );
+          m_logger.error( "RollingFileSize " + strFileSize + " is not numeric, using default value of 1 meg" );
+          m_logger.removeAllAppenders();
+        }
+        else
+        {
+          m_logger.error( "RollingFileSize " + strFileSize + " is not numeric, using default value of 1 meg" );
+        }
+      }
+    }
+
+    if ( strRollOverLogFile != null )
+    {
+      int nMaxBackupFiles = 1;
+
+      if ( strRollOverMaxFiles != null )
+      {
+        nMaxBackupFiles = Integer.parseInt( strRollOverMaxFiles );
+
+      }
+
+      listRollingLogFiles.add( new FileSpec( strRollOverLogFile, strRollOverPattern, lMaxFileSize, nMaxBackupFiles ) );
+
+    }
+
+    // see if numbered log files exist
+    x = 0;
+    
+    while( true )
+    {
+      x++;
+      strRollOverLogFile = VwResourceMgr.getString( "vw.log4j.rollingLogfile" + x, (String)null );
+      
+      if ( strRollOverLogFile == null )
+      {
+        break;
+      }
+
+      strFileSize = VwResourceMgr.getString( "vw.log4j.rollingLogfileSize" + x, (String)null );
+      
+      if ( strFileSize != null )
+      {
+        lMaxFileSize = 1024000;
+        if ( VwExString.isIntegral( strFileSize, true ))
+        {
+          lMaxFileSize = Long.parseLong( strFileSize  );
+        }
+        else
+        {
+          m_logger.error( "RollingFileSize" + x + " " + strFileSize + " is not numeric, using default value of 1 meg" );
+        }
+        
+      }
+      else
+      {
+        lMaxFileSize = 1024000;
+      }
+
+      strRollOverPattern = VwResourceMgr.getString("vw.log4j.rollingLogfilePattern" + x, (String)null );
+
+      strRollOverMaxFiles = VwResourceMgr.getString( "vw.log4j.rollingLogfileMaxFiles + x", (String)null );
+
+      int nMaxRolloverFiles = 1;
+
+      if ( strRollOverMaxFiles != null )
+      {
+        nMaxRolloverFiles = Integer.parseInt( strRollOverMaxFiles  );
+      }
+
+      listRollingLogFiles.add(  new FileSpec( strRollOverLogFile, strRollOverPattern, lMaxFileSize, nMaxRolloverFiles ) );
+      
+    } // end while()
+    
+    
+    try
+    {
+      // Add any standard FileAppenders
+      for ( FileSpec fileSpec : listLogFiles )
+      {
+        PatternLayout filePattern = null;
+        
+        if ( fileSpec.m_strPattern != null )
+        {
+          filePattern = new PatternLayout( fileSpec.m_strPattern );
+        }
+        else
+        {
+          filePattern = pattern;
+        }
+        
+        m_logger.addAppender( new FileAppender( filePattern, fileSpec.m_strName, true ));
+      }
+
+      
+      // Add any RollingFileAppenders
+      for ( FileSpec fileSpec : listRollingLogFiles )
+      {
+        PatternLayout filePattern = null;
+        
+
+        if ( fileSpec.m_strPattern != null )
+        {
+          filePattern = new PatternLayout( fileSpec.m_strPattern );
+        }
+        else
+        {
+          filePattern = pattern;
+        }
+        
+        RollingFileAppender rfa = new RollingFileAppender( filePattern, fileSpec.m_strName, true );
+        rfa.setMaximumFileSize( fileSpec.m_lMaxRolloverSize );
+        rfa.setMaxBackupIndex( fileSpec.m_nMaxFiles );
+
+        m_logger.addAppender( rfa );
+        
+      }
+      
+      
+        
+    }
+    catch( Exception ex )
+    {
+      ex.printStackTrace();
+      
+    }
+    
+    
+    String strLogLevel = VwResourceMgr.getString( "vw.log4j.level", "debug" );
+    
+    Level level = (Level)s_mapLevels.get( strLogLevel.toLowerCase() );
+    
+    if ( level != null )
+    {
+      m_logger.setLevel( level );
+    }
+
+    boolean fUseEmail = VwResourceMgr.getBoolean( "vw.log4j.useEmail", false );
+    
+    if ( fUseEmail )
+    {
+      
+      String strEmailLevel = VwResourceMgr.getString( "vw.log4j.emailLevel", "error" );
+      
+      m_levelEmail = (Level)s_mapLevels.get( strEmailLevel.toLowerCase() );
+      
+      SMTPAppender smtp = new SMTPAppender( new TriggeringEventEvaluator()
+      {
+        public boolean isTriggeringEvent(LoggingEvent event)
+        {
+          Level level = event.getLevel();
+         
+          return level.isGreaterOrEqual( m_levelEmail );
+          
+          
+        }
+      });
+      
+      String strRecipList = VwResourceMgr.getString( "vw.log4j.emailRecipientList", (String)null );
+      
+      smtp.setBufferSize( 1 );
+      smtp.setFrom( VwResourceMgr.getString( "vw.log4j.emailFrom", "" ) );
+      smtp.setTo( strRecipList );
+      String strSmtpHost = VwResourceMgr.getString( "vw.log4j.smtp.host", "" );
+      smtp.setSMTPHost(  strSmtpHost);
+      smtp.setSubject( VwResourceMgr.getString( "vw.log4j.emailSubject", "Error Occurred" ));
+      smtp.setLayout( pattern );
+      smtp.activateOptions();
+          
+      
+      m_logger.addAppender( smtp );
+    
+    } // end if ( strUseEmail.equals( "true") )
+   
+    
+    String strConnectAddress = VwResourceMgr.getString( "vw.log4j.socketConnectAddress", (String)null );
+    if ( strConnectAddress != null )
+    {
+       
+ 
+     String strPort = VwResourceMgr.getString( "vw.log4j.socketConnecPort", (String)null );
+      
+      if ( strPort == null )
+        throw new Exception( "The vw.log4j.socketConnecPort property must be specified to configure the sock appender");
+      
+      SocketAppender sockAppender = new SocketAppender(  strConnectAddress, Integer.parseInt( strPort ));
+      m_logger.addAppender( sockAppender );
+
+    }
+    
+    // *** Custom Appender configuration
+
+    
+    
+
+    String strCustAppender = VwResourceMgr.getString( "vw.log4j.custAppenderClass", (String)null );
+    String strCustAppenderPattern = null;
+    String strAppenderName 		  = null;
+    Class<Appender> clsAppender = null;
+    Appender objAppender = null;
+    
+    if ( strCustAppender != null )
+    {    
+      strCustAppenderPattern = VwResourceMgr.getString( "vw.log4j.custAppenderPattern", (String)null );
+      strAppenderName = VwResourceMgr.getString( "vw.log4j.custAppenderName", (String)null );
+      if(strAppenderName == null)
+      {
+    	  strAppenderName = strCustAppender;
+      }
+  
+      if ( strCustAppenderPattern == null )
+      {
+        strCustAppenderPattern = s_strDefaultPattern;
+      }
+      
+      clsAppender = (Class<Appender>)Class.forName( strCustAppender );
+      objAppender = clsAppender.newInstance();
+      PatternLayout pl = new PatternLayout( strCustAppenderPattern );
+      objAppender.setLayout( pl );
+      
+      x = 0;
+      
+      //Set any specified properties for this appender
+      while( true )
+      {
+        String strPropName = VwResourceMgr.getString( "vw.log4j.custAppenderPropName" + x, (String)null );
+        if ( strPropName == null )
+        {
+          break;
+        }
+  
+        String strPropValue = VwResourceMgr.getString( "vw.log4j.custAppenderPropValue" + x, (String)null );
+        if ( strPropValue == null )
+          throw new Exception("A property value must be specified for the vw.log4j.custAppenderPropName" + x  + " name");
+        
+        VwBeanUtils.setValue( objAppender, strPropName, strPropValue );
+        ++x;
+  
+      }
+
+      objAppender.setName(strAppenderName);
+      m_logger.addAppender( objAppender );
+    
+    }
+    
+    x = 0;
+    
+    //see if multiple custom appenders were specified    
+    while( true )
+    {
+      strCustAppender = VwResourceMgr.getString( "vw.log4j.custAppenderClass" + x, (String)null );
+      strAppenderName = VwResourceMgr.getString( "vw.log4j.custAppenderName" + x, (String)null );
+      
+      if ( strCustAppender == null )
+      {
+        return;
+      }
+
+      if(strAppenderName == null)
+      {
+    	  strAppenderName = strCustAppender;
+      }
+
+      
+      strCustAppenderPattern = VwResourceMgr.getString( "vw.log4j.custAppenderPattern" + x, (String)null );
+
+      if ( strCustAppenderPattern == null )
+      {
+        strCustAppenderPattern = s_strDefaultPattern;
+      }
+      
+      PatternLayout pl = new PatternLayout( strCustAppenderPattern );
+
+      clsAppender = (Class<Appender>)Class.forName( strCustAppender );
+      objAppender = clsAppender.newInstance();
+      objAppender.setName(strAppenderName);
+      objAppender.setLayout( pl );
+
+      int y = 0;
+      
+      while( true )
+      {
+        String strPropName = VwResourceMgr.getString( "vw.log4j.custAppender" + x + "PropName" + y, (String)null );
+        if ( strPropName == null )
+        {
+          break;
+        }
+  
+        String strPropValue = VwResourceMgr.getString( "vw.log4j.custAppender" + x + "PropValue" + y, (String)null );
+        if ( strPropValue == null )
+          throw new Exception("A property value must be specified for the vw.log4j.custAppender" + x + "PropName" + y  + " name");
+        
+        VwBeanUtils.setValue( objAppender, strPropName, strPropValue );
+        ++y;
+      }
+      
+      ++x;
+
+      m_logger.addAppender( objAppender );
+
+    }
+
+
+  } // end setupFromProps()
+
+
+
+  /**
+   * Try to load the properties file. It is assumed to be in the a classpath defined to the JVM
+   * 
+   * @param strPropFileName The name of the properties file to load
+   * @return
+   * @throws Exception if any io errors occurr or the properties file is not in a defined classpath
+   */
+  private Properties loadProperties( String strPropFileName ) throws Exception
+  {
+    InputStream ins = null;
+    
+    if ( VwExString.count( strPropFileName, '.' ) > 1 )
+    {
+      ClassLoader ldr = Thread.currentThread().getContextClassLoader();
+      int nPos = strPropFileName.lastIndexOf( '.' );
+      
+      String strPropPath = strPropFileName.substring( 0, nPos  );
+      
+      strPropPath = strPropPath.replace( '.', '/' );
+      
+      ins = ldr.getResourceAsStream( strPropPath + ".properties" );
+      
+    }
+    else
+    {
+      URL urlProps = VwResourceStoreFactory.getInstance().getStore().getPropertiesAsURL( strPropFileName );
+      ins = urlProps.openStream();
+      
+      
+    }
+    
+    Properties props = new Properties();
+    props.load( ins );
+    
+    return props;
+    
+  }
+
+  /**
+   * Configures bare bones defaults because the MMSProperties file is not available
+   */
+  private void configureDefaults( Exception ex )
+  {
+    PatternLayout pattern = new PatternLayout( s_strDefaultPattern );
+    m_logger.addAppender( new ConsoleAppender( pattern ) );
+    m_logger.setLevel( Level.DEBUG );
+    
+    if ( ex != null )
+      fatal( this.getClass(), "Error logger defaults are being configured because property loader threw this Exception", ex );
+    
+  }
+
+
+  public void info( Class clsProducer, String strMsg )
+  { m_logger.info( makeMsg( clsProducer, strMsg ) ); }
+  
+
+  public void warn( Class clsProducer, String strMsg )
+  { m_logger.warn( makeMsg( clsProducer, strMsg ) ); }
+  
+  
+  public void warn( Class clsProducer, String strMsg, Throwable t )
+  { m_logger.warn( "*" + makeMsg( clsProducer, strMsg ), t ); }
+
+  
+  public void error( Class clsProducer, String strMsg )
+  { m_logger.error( "***" + makeMsg( clsProducer, strMsg ) ); }
+  
+  
+  public void error( Class clsProducer, String strMsg, Throwable t )
+  { m_logger.error( "***" + makeMsg( clsProducer, strMsg ), t ); }
+
+  public void fatal( Class clsProducer, String strMsg )
+  { m_logger.fatal( "*****" + makeMsg( clsProducer, strMsg ) ); }
+  
+  
+  public void fatal( Class clsProducer, String strMsg, Throwable t )
+  { m_logger.fatal( "*****" + makeMsg( clsProducer, strMsg ), t ); }
+  
+
+  public void debug( Class clsProducer, String strMsg )
+  {
+    if ( m_logger.isDebugEnabled() )
+      m_logger.debug( makeMsg( clsProducer, strMsg ) );
+  }
+
+  //
+  public void debug( String strMsg )
+  {
+    if ( m_logger.isDebugEnabled() )
+      m_logger.debug( makeMsg( null, strMsg ) );
+  }
+  
+
+  public void info( String strMsg )
+  { m_logger.info( makeMsg( null, strMsg ) ); }
+  
+
+  public void warn( String strMsg )
+  { m_logger.warn( makeMsg( null, strMsg ) ); }
+  
+  
+  public void warn( String strMsg, Throwable t )
+  { m_logger.warn( makeMsg( null, strMsg ), t ); }
+
+  
+  public void error( String strMsg )
+  { m_logger.error( makeMsg( null, strMsg ) ); }
+  
+  
+  public void error( String strMsg, Throwable t )
+  { m_logger.error( makeMsg( null, strMsg ), t ); }
+
+  public void fatal( String strMsg )
+  { m_logger.fatal( makeMsg( null, strMsg ) ); }
+  
+  
+  public void fatal( String strMsg, Throwable t )
+  { m_logger.fatal( makeMsg( null, strMsg ), t ); }
+
+  public void trace( String strMsg )
+  {
+    if ( m_logger.isTraceEnabled() )
+      m_logger.trace( makeMsg( null, strMsg ) );
+
+  }
+  
+  
+  public void trace( String strMsg, Throwable t )
+  {
+    if ( m_logger.isTraceEnabled() )
+      m_logger.trace( makeMsg( null, strMsg ), t );
+  }
+
+  /**
+   * Makes a message from a Class name and message string
+   * 
+   * @param clsProducer The name of the cllass that produced the message
+   * @param strMsg The message
+   * @return
+   */
+  private String makeMsg( Class clsProducer, String strMsg )
+  {
+    if ( clsProducer != null )
+      return clsProducer.getName() + ": " + strMsg;
+    
+    return strMsg;
+  }
+  
+  public static void main( String[] args )
+  {
+    try
+    {
+      //VwLogger log = VwLogger.getInstance( "test.properties");
+      VwLogger log = VwLogger.getInstance();
+      Enumeration<Appender> app = log.getAppenders();
+      VwLog4jSocketAppender appen = new VwLog4jSocketAppender( "localhost", 9080 );
+      log.addAppender( appen );
+      app = log.getAppenders();
+     
+      log = VwLogger.getInstance();
+      log.trace("Trace Me"); 
+      log.debug("Debug this"); 
+      log.info("Info this"); 
+      log.warn("Warn"); 
+      log.error("Error"); 
+      log.fatal("Fatal"); 
+      return;
+      
+    }
+    catch( Exception ex )
+    {
+      ex.printStackTrace();
+    }
+  }
+} // end class VwLogger{}
+
+// *** End of VwLogger.java ***
+

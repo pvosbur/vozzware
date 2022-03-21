@@ -1,0 +1,640 @@
+<codeSnippets>
+  <snippet>
+    <type>constructor</type>
+    <code><![CDATA[
+super( strDriverId, strUrlId, urlMappingDoc, loggerSql, loggerDbMgr   );
+  ]]>
+    </code>
+  </snippet>
+
+  <snippet>
+    <type>getInstance</type>
+    <code><![CDATA[
+  if (${instanceName} == null)
+    {
+      VwResourceMgr.loadBundle( "dao", true );
+      String strDriverId = VwResourceMgr.getString( "daoDriverName" );
+      String strUrlId = VwResourceMgr.getString( "daoUrlId" );
+      String strUrlXsmDocName = VwResourceMgr.getString( "daoMappingDoc" );
+      String[] astrLoggerProperties = (VwResourceMgr.getString( "daoLoggerProperties" )).split( "," );
+      
+      URL urlMappingDoc = VwResourceStoreFactory.getInstance().getStore().getDocument( strUrlXsmDocName );
+
+      VwLogger logSql = null;
+      VwLogger logDbMgr = null;
+
+      // Loggers for the App Db Logger and VwDbMgr logger
+
+      if ( loggerSql != null )
+      {
+        logSql = loggerSql;
+      }
+      else
+      if ( !astrLoggerProperties[0].equals( "daoLoggerProperties" ) )
+      {
+        logSql = VwLogger.getInstance( astrLoggerProperties[0] );	// configure logger from named properties file
+      }
+
+      if ( loggerDbMgr != null )
+      {
+        logDbMgr = loggerDbMgr;
+      }
+      else
+      if ( !astrLoggerProperties[1].equals( "daoLoggerProperties" ) )
+      {
+        logDbMgr = VwLogger.getInstance( astrLoggerProperties[1] );	// configure logger from named properties file
+      }
+
+      // Mapping document required
+      if ( urlMappingDoc == null )
+      {
+        String strMissingUrl = "Cannot find mapping document '" +  strUrlXsmDocName + "' for resource key 'daoMappingDoc' ";
+
+        if ( loggerSql != null )
+        {
+          loggerSql.error( ${className}.class, strMissingUrl );
+        }
+
+        throw new Exception( strMissingUrl );
+      }
+      
+      ${instanceName} = new ${className}Impl( strDriverId, strUrlId, urlMappingDoc, logSql, logDbMgr );
+    }
+    
+    return ${instanceName};
+    
+
+      ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>primaryKey</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = getSqlMgr();
+    Exception exFind = null;
+    
+    try
+    {
+      return (${className})sqlMgr.findByPrimaryKey( ${className}.class, ${value} );
+    }
+    catch( Exception ex )
+    {
+      exFind = ex;
+      throw ex;
+    }
+    finally
+    {
+     	closeResources( sqlMgr, exFind );
+    }
+    ]]>
+    </code>
+  </snippet>
+   <snippet>
+    <type>exists</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = getSqlMgr();
+    Exception exFind = null;
+    
+    try
+    {
+      return sqlMgr.exists( objToTest );
+    }
+    catch( Exception ex )
+    {
+      exFind = ex;
+      throw ex;
+    }
+    finally
+    {
+     	closeResources( sqlMgr, exFind );
+    }
+    ]]>
+    </code>
+  </snippet>
+  
+  <snippet>
+    <type>compositKey</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = getSqlMgr();
+    Exception exFind = null;
+    ${mapCode}
+    
+    try
+    {
+      return (${className})sqlMgr.findByPrimaryKey( ${mappingId}.class, mapCompositeKeys );
+    }
+    catch( Exception ex )
+    {
+      exFind = ex;
+      throw ex;
+    }
+    finally
+    {
+     	closeResources( sqlMgr, exFind );
+    }
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>findBy</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = getSqlMgr();
+    Exception exFind = null;
+    
+    try
+    {
+      return (${className})sqlMgr.findBy( ${className}.class, ${finderName}, ${value} );
+    }
+    catch( Exception ex )
+    {
+      exFind = ex;
+      throw ex;
+    }
+    finally
+    {
+     	closeResources( sqlMgr, exFind );
+    }
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>findByCustomId</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = getSqlMgr();
+    Exception exFind = null;
+
+    try
+    {
+      return (${className})sqlMgr.findBy( "${id}", ${className}.class, ${finderName}, ${value} );
+    }
+    catch( Exception ex )
+    {
+      exFind = ex;
+      throw ex;
+    }
+    finally
+    {
+     	closeResources( sqlMgr, exFind );
+    }
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>findAllByCustomId</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = getSqlMgr();
+    Exception exFind = null;
+
+    try
+    {
+      return (List<${className}>)sqlMgr.findAllBy( "${id}", ${className}.class, ${finderName}, ${value} );
+    }
+    catch( Exception ex )
+    {
+      exFind = ex;
+      throw ex;
+    }
+    finally
+    {
+     	closeResources( sqlMgr, exFind );
+    }
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>findAllBy</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = getSqlMgr();
+    Exception exFind = null;
+    
+    try
+    {
+      return (List<${className}>)sqlMgr.findAllBy( ${className}.class, ${finderName}, ${value} );
+    }
+    catch( Exception ex )
+    {
+      exFind = ex;
+      throw ex;
+    }
+    finally
+    {
+     	closeResources( sqlMgr, exFind );
+    }
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>findAll</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = getSqlMgr();
+    Exception exFind = null;
+    
+    try
+    {
+      return (List<${className}>)sqlMgr.findAll( ${className}.class );
+    }
+    catch( Exception ex )
+    {
+      exFind = ex;
+      throw ex;
+    }
+    finally
+    {
+     	closeResources( sqlMgr, exFind );
+    }
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>save</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = null;
+
+    VwSqlMgr sqlMgrTrans = getTransactionSqlMgr();
+
+    if ( sqlMgrTrans != null )
+    {
+      sqlMgr = sqlMgrTrans;
+    }
+    else
+    {
+      sqlMgr = getSqlMgr();
+    }
+
+    Exception exSave = null;
+
+    try
+    {
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.setAutoCommit( false );
+      }
+
+      sqlMgr.${saveType}( objToSave );
+
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.commit();
+      }
+    }
+    catch( Exception ex )
+    {
+      exSave = ex;
+      if ( sqlMgrTrans == null )
+      {
+        rollback( sqlMgr, ex);
+      }
+
+      throw ex;
+    }
+    finally
+    {
+      if ( sqlMgrTrans == null )
+     	{
+     	  closeResources( sqlMgr, exSave );
+     	}
+    }
+
+    ]]>
+    </code>
+  </snippet>
+
+  <snippet>
+    <type>saveBy</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = null;
+
+    VwSqlMgr sqlMgrTrans = getTransactionSqlMgr();
+
+    if ( sqlMgrTrans != null )
+    {
+      sqlMgr = sqlMgrTrans;
+    }
+    else
+    {
+      sqlMgr = getSqlMgr();
+    }
+
+    Exception exSave = null;
+
+    try
+    {
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.setAutoCommit( false );
+      }
+
+      sqlMgr.save( objToSave, "${id}" );
+
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.commit();
+      }
+
+    }
+    catch( Exception ex )
+    {
+      exSave = ex;
+      if ( sqlMgrTrans == null )
+      {
+        rollback( sqlMgr, ex);
+      }
+      throw ex;
+    }
+    finally
+    {
+      if ( sqlMgrTrans == null )
+     	{
+     	  closeResources( sqlMgr, exSave );
+     	}
+    }
+    ]]>
+    </code>
+  </snippet>
+
+  <snippet>
+    <type>saveByMappingId</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = null;
+
+    VwSqlMgr sqlMgrTrans = getTransactionSqlMgr();
+
+    if ( sqlMgrTrans != null )
+    {
+      sqlMgr = sqlMgrTrans;
+    }
+    else
+    {
+      sqlMgr = getSqlMgr();
+    }
+
+    Exception exSave = null;
+
+    try
+    {
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.setAutoCommit( false );
+      }
+
+      sqlMgr.save( objToSave, strMappingId );
+
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.commit();
+      }
+    }
+    catch( Exception ex )
+    {
+      exSave = ex;
+      if ( sqlMgrTrans == null )
+      {
+        rollback( sqlMgr, ex);
+      }
+
+      throw ex;
+    }
+    finally
+    {
+      if ( sqlMgrTrans == null )
+     	{
+     	  closeResources( sqlMgr, exSave );
+     	}
+    }
+    ]]>
+    </code>
+  </snippet>
+
+  <snippet>
+    <type>delete</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = null;
+
+    VwSqlMgr sqlMgrTrans = getTransactionSqlMgr();
+
+    if ( sqlMgrTrans != null )
+    {
+      sqlMgr = sqlMgrTrans;
+    }
+    else
+    {
+      sqlMgr = getSqlMgr();
+    }
+
+    Exception exDelete = null;
+
+    try
+    {
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.setAutoCommit( false );
+      }
+
+      sqlMgr.${deleteType}( objToDelete );
+
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.commit();
+      }
+    }
+    catch( Exception ex )
+    {
+      exDelete = ex;
+
+      if ( sqlMgrTrans == null )
+      {
+        rollback( sqlMgr, ex);
+      }
+
+      throw ex;
+
+    }
+    finally
+    {
+      if ( sqlMgrTrans == null )
+     	{
+     	  closeResources( sqlMgr, exDelete );
+     	}
+    }
+    ]]>
+    </code>
+  </snippet>
+
+  <snippet>
+    <type>deleteBy</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = null;
+
+    VwSqlMgr sqlMgrTrans = getTransactionSqlMgr();
+
+    if ( sqlMgrTrans != null )
+    {
+      sqlMgr = sqlMgrTrans;
+    }
+    else
+    {
+      sqlMgr = getSqlMgr();
+    }
+
+    Exception exDelete = null;
+
+    try
+    {
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.setAutoCommit( false );
+      }
+
+      sqlMgr.deleteBy( "${mappingId}", objToDelete, "${id}" );
+
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.commit();
+      }
+    }
+    catch( Exception ex )
+    {
+      exDelete = ex;
+      if ( sqlMgrTrans == null )
+      {
+        rollback( sqlMgr, ex);
+      }
+
+      throw ex;
+
+    }
+    finally
+    {
+      if ( sqlMgrTrans == null )
+     	{
+     	  closeResources( sqlMgr, exDelete );
+     	}
+    }
+    ]]>
+    </code>
+  </snippet>
+
+  <snippet>
+    <type>deleteByMappingId</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = null;
+
+    VwSqlMgr sqlMgrTrans = getTransactionSqlMgr();
+
+    if ( sqlMgrTrans != null )
+    {
+      sqlMgr = sqlMgrTrans;
+    }
+    else
+    {
+      sqlMgr = getSqlMgr();
+    }
+
+    Exception exDelete = null;
+
+    try
+    {
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.setAutoCommit( false );
+      }
+
+      sqlMgr.deleteBy( objToDelete, strMappingId );
+
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.commit();
+      }
+    }
+    catch( Exception ex )
+    {
+      exDelete = ex;
+      if ( sqlMgrTrans == null )
+      {
+        rollback( sqlMgr, ex);
+      }
+
+      throw ex;
+
+    }
+    finally
+    {
+      if ( sqlMgrTrans == null )
+     	{
+     	  closeResources( sqlMgr, exDelete );
+     	}
+    }
+    ]]>
+    </code>
+  </snippet>
+
+  <snippet>
+    <type>exec</type>
+    <code><![CDATA[
+    VwSqlMgr sqlMgr = null;
+
+    VwSqlMgr sqlMgrTrans = getTransactionSqlMgr();
+
+    if ( sqlMgrTrans != null )
+    {
+      sqlMgr = sqlMgrTrans;
+    }
+    else
+    {
+      sqlMgr = getSqlMgr();
+    }
+
+    Exception exExec = null;
+
+    try
+    {
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.setAutoCommit( false );
+      }
+
+      sqlMgr.exec( strSql, objParams );
+
+      if ( sqlMgrTrans == null )
+      {
+        sqlMgr.commit();
+      }
+
+    }
+    catch( Exception ex )
+    {
+      exExec = ex;
+      if ( sqlMgrTrans == null )
+      {
+        rollback( sqlMgr, ex);
+      }
+
+      throw ex;
+
+    }
+    finally
+    {
+      if ( sqlMgrTrans == null )
+      {
+      	closeResources( sqlMgr, exExec );
+      }
+    }
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+    <type>execWithScalerResult</type>
+    <code><![CDATA[
+    return (${className})execWithScalerResult( "${sql}", ${value} );
+    ]]>
+    </code>
+  </snippet>
+  <snippet>
+     <type>execWithScalerListResult</type>
+     <code><![CDATA[
+     return (${className})execWithScalerListResult( "${sql}", ${value} );
+     ]]>
+     </code>
+   </snippet>
+
+</codeSnippets>

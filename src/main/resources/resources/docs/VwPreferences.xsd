@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://vozzware.com/pro/util"
+	       xmlns:tns="http://vozzware.com/pro/util"
+		   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		   elementFormDefault="qualified"
+		   attributeFormDefault="unqualified">
+
+  <xsd:complexType name="VwPreference">
+	<xsd:attribute name="name" type="xsd:string" use="required"/>
+	<xsd:attribute name="value" type="xsd:string" use="required"/>
+  </xsd:complexType>
+		
+  <xsd:complexType name="VwPreferenceGroup">
+	 <xsd:sequence>
+		<xsd:element name="preference" type="tns:VwPreference" maxOccurs="unbounded"/>
+	 </xsd:sequence>
+	 <xsd:attribute name="name" type="xsd:string" use="required"/>
+  </xsd:complexType>
+	
+  <xsd:complexType name="VwPreferences">
+	 <xsd:sequence>
+       <xsd:element name="preferenceGroup" type="tns:VwPreferenceGroup" maxOccurs="unbounded"/>
+     </xsd:sequence>
+  </xsd:complexType>
+	
+  <xsd:element name="preferences" type="tns:VwPreferences" />
+		
+</xsd:schema>

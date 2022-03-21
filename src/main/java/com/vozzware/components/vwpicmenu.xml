@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menuSpec>
+	<menu name="VwPicListPopup" type="popup" >
+	  <menuItem id="selAll" name="Select all" mnemonic="S" />
+	  <menuItem id="selNone" name="Select none" mnemonic="n" />
+	</menu>
+</menuSpec>

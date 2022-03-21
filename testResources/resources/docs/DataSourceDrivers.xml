@@ -1,0 +1,20 @@
+<DriverList>
+
+  <driver id="POSTGRES" driverClass="org.postgresql.Driver" desc="Postgres JDBC Driver" connectionTestTable="connect_test">
+
+    <!-- Connection URL's -->
+    <url id="LOCAL_LOG" target="jdbc:postgresql://localhost/AiDb"/>
+    <url id="LOCAL" target="jdbc:postgresql://localhost/AiDb" pool="aiLocal_pool"/>
+    <url id="QA" target="jdbc:postgresql://armorqadb/AiDb" pool="aiQa_pool"/>
+    <url id="DEV" target="jdbc:postgresql://armordev/AiDb" pool="aiDev_pool"/>
+    <url id="PROD" target="jdbc:postgresql://armorproddb/AiDb" pool="aiProd_pool"/>
+
+    <!-- Connection Pool settings -->
+    <connectionPool id="aiLocal_pool" min="5" max="20" uid="aiweb" pwd="file:${user.home}/.ai/dbAccess.txt"/>
+    <connectionPool id="aiQa_pool" min="30" max="30" uid="aiweb" pwd="2aiWeb"/>
+    <connectionPool id="aiDev_pool" min="30" max="30" uid="aiweb" pwd="2aiWeb"/>
+    <connectionPool id="aiProd_pool" min="30" max="80" uid="aiweb" pwd="2aiWeb"/>
+
+  </driver>
+
+</DriverList>

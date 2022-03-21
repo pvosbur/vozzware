@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Bookstore>
+  <books>
+    <book>
+      <name>Joy of Sex</name>
+      <author>Dr. Ruth</author>
+      <bookType>HardCover</bookType>
+      <bookType order="special">Paperback</bookType>
+      <links>
+        <link url="http://book1"/>
+        <link url="http://book2"/>
+      </links>
+    </book>
+    <book>
+      <name>Loveing CourseJuggler</name>
+      <author>P. VosBurgh</author>
+      <bookType>HardCover</bookType>
+      <bookType order="special">Paperback</bookType>
+      <links>
+        <link url="http://amazon.com"/>
+        <link url="http://borders.com"/>
+      </links>
+    </book>
+  </books>
+</Bookstore>

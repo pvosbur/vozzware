@@ -1,0 +1,19 @@
+plugins
+{
+  id 'java'
+}
+
+repositories
+{
+  mavenCentral()
+}
+
+dependencies
+{
+  implementation fileTree('lib') {
+    include '*.jar'
+  }
+
+  compileOnly 'org.apache.tomcat:tomcat-catalina:9.0.53'
+}
+
