@@ -3,7 +3,17 @@ plugins
   id 'java'
 }
 
-defaultTasks 'clean', 'jar'
+
+defaultTasks 'dist'
+
+tasks.register( "dist", Copy )
+        {
+          from 'build/libs'
+          into 'dist'
+
+          dependsOn clean, jar
+        }
+
 
 java {
   toolchain {
