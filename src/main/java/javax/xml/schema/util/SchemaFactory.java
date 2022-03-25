@@ -36,7 +36,7 @@ public abstract class SchemaFactory
 
     if ( s_instance == null )
     {
-      ResourceBundle resource = ResourceBundle.getBundle( "javax.xml.schema.util.schema" );
+      ResourceBundle resource = ResourceBundle.getBundle( "resources.properties.schema" );
 
       String strImplClass = resource.getString( "javax.schema.factoryImpl" );
 

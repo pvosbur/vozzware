@@ -37,10 +37,10 @@ public class VwResourceStore
 {
   private Map<String, Object> s_mapResources = Collections.synchronizedMap( new HashMap<String,Object>() );
   
-  private String m_strImagePath = "main/resources/images/";
-  private String m_strMenuPath = "main/resources/menues/";
-  private String m_strDocPath = "main/resources/docs/";
-  private String m_strPropPath = "main/resources/properties/";
+  private String m_strImagePath = "resources/images/";
+  private String m_strMenuPath = "resources/menues/";
+  private String m_strDocPath = "resources/docs/";
+  private String m_strPropPath = "resources/properties/";
   
   /**
    * Constructor

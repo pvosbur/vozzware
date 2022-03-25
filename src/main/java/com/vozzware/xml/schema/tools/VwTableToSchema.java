@@ -36,7 +36,7 @@ public class VwTableToSchema
 
   VwDataObject   m_dobjSchema;               // DataObject to hold parsed schema
 
-  private static ResourceBundle  s_msgs = ResourceBundle.getBundle( "com.vozzware.xml.dtd.msgs" );
+  private static ResourceBundle  s_msgs = ResourceBundle.getBundle( "resources.properties.schemaMsgs" );
 
   /**
    * Make a schema complexType defibition for each table name in the table name array.

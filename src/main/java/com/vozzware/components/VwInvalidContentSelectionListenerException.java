@@ -35,7 +35,7 @@ public class VwInvalidContentSelectionListenerException extends Exception
    */
   public VwInvalidContentSelectionListenerException()
   {
-    super( ResourceBundle.getBundle( "com.vozzware.components.components").getString( "Vw.Components.InvalidContentListenerr" ) );
+    super( ResourceBundle.getBundle( "resources.properties.components").getString( "Vw.Components.InvalidContentListenerr" ) );
   }
 
 

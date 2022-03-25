@@ -838,7 +838,7 @@ public class VwDelimString extends Object
 
     if ( !fFound )
     {
-      ResourceBundle rb = ResourceBundle.getBundle("com.vozzware.util.vwutil");
+      ResourceBundle rb = ResourceBundle.getBundle("resources.properties.vwutil");
       throw new Exception( strToken + " " + rb.getString( "VwUtil.TokenNotFound" ) );
     }
 

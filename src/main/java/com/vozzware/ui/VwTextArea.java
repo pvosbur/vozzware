@@ -84,7 +84,7 @@ public class VwTextArea extends JTextArea implements ActionListener
   {
     super();
 
-    m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+    m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
     m_vecListeners = new Vector( 1 );
 

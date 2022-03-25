@@ -84,7 +84,7 @@ public class VwTextPane extends JTextPane implements ActionListener
   {
     super();
 
-    m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+    m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
     if ( doc == null )
       m_doc = getDocument();                  // Get Default

@@ -35,7 +35,7 @@ public class VwInvalidContentProducerException extends Exception
    */
   public VwInvalidContentProducerException()
   {
-    super( ResourceBundle.getBundle( "com.vozzware.components.components").getString( "Vw.Components.InvalidContentProducer" ) );
+    super( ResourceBundle.getBundle( "resources.properties.components").getString( "Vw.Components.InvalidContentProducer" ) );
   }
 
 

@@ -122,7 +122,7 @@ public class VwSmartPanel extends JPanel implements VwServiceable,
 
     try
     {
-      m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+      m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
     } catch( Exception e ){}
 

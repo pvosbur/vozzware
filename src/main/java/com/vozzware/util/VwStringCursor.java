@@ -50,7 +50,7 @@ public class VwStringCursor
   private boolean       m_fQuotedString;      // If true last word returned was in a quoted string
   private boolean       m_fIsComment;         // If true last word returned was a comment
 
-  private ResourceBundle m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+  private ResourceBundle m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
   /**
    * Constructor that initializes the cursor to zero and a forward moving direction

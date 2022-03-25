@@ -63,7 +63,7 @@ public class VwJar
 
   private  JarOutputStream m_jos;                 // Jar output stream
 
-  private  ResourceBundle  m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+  private  ResourceBundle  m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
 
   /**

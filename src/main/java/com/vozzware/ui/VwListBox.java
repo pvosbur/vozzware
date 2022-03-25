@@ -94,7 +94,7 @@ public class VwListBox extends JList implements ListSelectionListener
 
      try
      {
-       m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+       m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
      }
      catch( Exception e )
      {System.out.println( "In Bundle excep, Reason: " + e.toString());}

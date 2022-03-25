@@ -36,7 +36,7 @@ public abstract class WSDLFactory
 
     if ( s_instance == null )
     {
-      ResourceBundle resource = ResourceBundle.getBundle( "javax.wsdl.util.wsdl" );
+      ResourceBundle resource = ResourceBundle.getBundle( "resources.properties.wsdl" );
 
       String strImplClass = resource.getString( "javax.wsdl.factoryImpl" );
 

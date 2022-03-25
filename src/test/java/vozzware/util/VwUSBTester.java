@@ -81,7 +81,7 @@ public class VwUSBTester
   public void testHighLevel() throws Exception
   {
 
-    ResourceBundle bundel = ResourceBundle.getBundle( "javax.usb" );
+    ResourceBundle bundel = ResourceBundle.getBundle( "resources.properties.usb" );
 
     String services = VwResourceMgr.getString( "javax.usb.services" );
     UsbHub hubRoot = UsbHostManager.getUsbServices().getRootUsbHub();

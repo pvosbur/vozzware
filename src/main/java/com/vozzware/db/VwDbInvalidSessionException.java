@@ -48,7 +48,7 @@ public class VwDbInvalidSessionException extends VwDataSourceException
    * @return A string containing the Vw translated description
    */
   public String getVwDesc()
-  { return ResourceBundle.getBundle( "com.vozzware.db.vwdb" ).getString( "Vw.Db.InvalidSession" ); }
+  { return ResourceBundle.getBundle( "resources.properties.vwdb" ).getString( "Vw.Db.InvalidSession" ); }
 
 
 } // end class VwDbInvalidSessionException{}

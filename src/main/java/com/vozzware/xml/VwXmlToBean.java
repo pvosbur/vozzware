@@ -279,7 +279,7 @@ public class VwXmlToBean extends DefaultHandler implements XmlDeSerializer
 
   private XMLReader   m_saxp = null;                        // Sax parser
 
-  private ResourceBundle m_msgs = ResourceBundle.getBundle( "com.vozzware.xml.xmlmsgs" , Locale.ENGLISH );
+  private ResourceBundle m_msgs = ResourceBundle.getBundle( "resources.properties.xmlmsgs" , Locale.ENGLISH );
 
   private String[]   m_astrBoolValues = { "y", "yes", "true", "1" };
 
@@ -1266,7 +1266,7 @@ public class VwXmlToBean extends DefaultHandler implements XmlDeSerializer
     if ( !strCollectionMethodName.startsWith( "set" ) &&
          !strCollectionMethodName.startsWith( "add" ) )
     {
-      throw new Exception( ResourceBundle.getBundle( "com.vozzware.xml.xmlmsgs" ).getString( "IllegalMethodName" ) );
+      throw new Exception( ResourceBundle.getBundle( "resources.properties.xmlmsgs" ).getString( "IllegalMethodName" ) );
     }
 
     Method[] methods = clsCollectionMethod.getMethods();
@@ -1285,7 +1285,7 @@ public class VwXmlToBean extends DefaultHandler implements XmlDeSerializer
 
     if ( method == null )
     {
-      ResourceBundle rb = ResourceBundle.getBundle( "com.vozzware.xml.xmlmsgs" );
+      ResourceBundle rb = ResourceBundle.getBundle( "resources.properties.xmlmsgs" );
       String strMsg = rb.getString( "MethodNotFound" );
 
       strMsg = VwExString.replace( strMsg, "%1", strCollectionMethodName )

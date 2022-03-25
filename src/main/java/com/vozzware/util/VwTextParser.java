@@ -102,7 +102,7 @@ public class VwTextParser
    */
   public static final int EOF = 8;          // end of file/stream
 
-  private ResourceBundle m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+  private ResourceBundle m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
   /**
    * Constructor that initializes the cursor to zero and a forward moving direction

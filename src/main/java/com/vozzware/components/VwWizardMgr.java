@@ -77,7 +77,7 @@ public class VwWizardMgr extends JDialog
 
     m_panelUser = new JPanel( new BorderLayout() );
 
-    m_msgs = ResourceBundle.getBundle("com.vozzware.components.components");
+    m_msgs = ResourceBundle.getBundle("resources.properties.components");
 
     m_parent = parent;
 

@@ -62,7 +62,7 @@ public class VwActionIdentifiers
 
   static
   {
-    ResourceBundle rbUi = ResourceBundle.getBundle( "com.vozzware.ui.uimsgs");
+    ResourceBundle rbUi = ResourceBundle.getBundle( "resources.properties.ui");
 
     FILE  = rbUi.getString( "VwAdmin.Menu.File" );
     TOOLS  = rbUi.getString( "VwAdmin.Menu.Tools" );

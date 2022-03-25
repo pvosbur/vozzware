@@ -157,14 +157,14 @@ public class VwStack<T>
     }
     catch ( Exception i )
     {
-      throw new Exception( ResourceBundle.getBundle( "com.vozzware.util.vwutil" ).getString( "VwUtil.Stack.WaitExceeded" ) );
+      throw new Exception( ResourceBundle.getBundle( "resources.properties.vwutil" ).getString( "VwUtil.Stack.WaitExceeded" ) );
     }
 
     data = pop();
 
     if ( data == null )
     {
-      throw new Exception( ResourceBundle.getBundle( "com.vozzware.util.vwutil" ).getString( "VwUtil.Stack.WaitExceeded" ) );
+      throw new Exception( ResourceBundle.getBundle( "resources.properties.vwutil" ).getString( "VwUtil.Stack.WaitExceeded" ) );
     }
 
     return data;                // Return data

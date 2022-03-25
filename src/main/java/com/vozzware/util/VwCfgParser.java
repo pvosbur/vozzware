@@ -62,7 +62,7 @@ public class VwCfgParser extends Object
 
   private int             m_nLen;             // Length of buffer
 
-  private ResourceBundle  m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+  private ResourceBundle  m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
 
   class Record

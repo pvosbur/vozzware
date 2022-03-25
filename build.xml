@@ -24,7 +24,7 @@
      <property name="releaseNbr" value="3.3.12" />
      <property name="baseJarName" value="vozzworks" />
      <property name="distJarName" value="${baseJarName}_${releaseNbr}.jar" />
-     <property name="path.vwweb" value="../VozzWorksWeb_3.0.3" />
+     <property name="path.vwweb" value="../VozzWorksWeb" />
 
     <path id="path.class">
       <fileset dir = "${path.runtime}" includes="*.jar,*.zip" excludes="${distJarName}"/>
@@ -90,7 +90,7 @@
     <target name="jar" depends="compile" description="jar the classes dirs">
        <echo>Building jar file: ${distJarName}</echo>
         <copy todir="${path.classes}">
-            <fileset dir ="/main/resources" >
+            <fileset dir ="src/main/resources" >
               <include name="**/*.properties"/>
                 <include name="**/*.dtd"/>
                 <include name="**/*.xsd"/>

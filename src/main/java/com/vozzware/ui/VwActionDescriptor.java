@@ -30,7 +30,7 @@ class VwActionDescriptor
 
   private VwServiceDescriptor  m_serviceDesc;  // Service descriptor if sevice action
 
-  private ResourceBundle m_msgs = ResourceBundle.getBundle( "com.vozzware.ui.ui" );
+  private ResourceBundle m_msgs = ResourceBundle.getBundle( "resources.properties.ui" );
 
 
   /**

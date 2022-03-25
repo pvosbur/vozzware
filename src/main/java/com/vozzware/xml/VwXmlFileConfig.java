@@ -128,7 +128,7 @@ public class VwXmlFileConfig
     }
     
     // Not Found
-    String strErrMsg = ResourceBundle.getBundle( "com.vozzware.xml.xmlmsgs" ).getString( "Vw.Xml.MissingDocs" );
+    String strErrMsg = ResourceBundle.getBundle( "resources.properties.xmlmsgs" ).getString( "Vw.Xml.MissingDocs" );
     strErrMsg = VwExString.replace( strErrMsg, "%1", strXmlFileName );
     throw new Exception( strErrMsg );
 

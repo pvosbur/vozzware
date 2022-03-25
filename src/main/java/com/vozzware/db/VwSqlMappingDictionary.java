@@ -57,7 +57,7 @@ public class VwSqlMappingDictionary
   private Map<String,Map<String,String>>  m_mapDeleteById = Collections.synchronizedMap( new HashMap<String,Map<String,String>>() );
   private Map<String,String>              m_mapProcsById = Collections.synchronizedMap( new HashMap<String,String>() );
   
-  private static ResourceBundle s_rb = ResourceBundle.getBundle( "com.vozzware.db.vwdb" );
+  private static ResourceBundle s_rb = ResourceBundle.getBundle( "resources.properties.vwdb" );
   
   private VwSqlMappingDocument           m_sqlMappingDoc;
 

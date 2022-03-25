@@ -68,7 +68,7 @@ public class VwDataObject implements VwServiceable
 
   private   ArrayList m_listDataOrder;               // Only used to preserve data order if specified
 
-  protected ResourceBundle m_msgs = ResourceBundle.getBundle( "com.vozzware.xml.xmlmsgs" );
+  protected ResourceBundle m_msgs = ResourceBundle.getBundle( "resources.properties.xmlmsgs" );
 
   private   VwDataObject m_dobjResult;
   

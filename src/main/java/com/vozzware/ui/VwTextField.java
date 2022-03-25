@@ -89,7 +89,7 @@ public class VwTextField extends JTextField
     }
     catch( Exception e ){}                                 // We know this mask is valid
 
-    m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+    m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
     m_vecListeners = new Vector( 1 );
 

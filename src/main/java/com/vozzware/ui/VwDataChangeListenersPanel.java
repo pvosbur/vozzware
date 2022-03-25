@@ -68,7 +68,7 @@ public class VwDataChangeListenersPanel extends VwPropBasePanel  implements List
   public VwDataChangeListenersPanel( VwDataChangeListenersPropertyEditor  pe )
   {
 
-    m_msgs = ResourceBundle.getBundle( "com.vozzware.ui.ui" );
+    m_msgs = ResourceBundle.getBundle( "resources.properties.ui" );
 
     if ( VwComponentPropPropertyEditor.m_strClassPath == null ||
          (VwComponentPropPropertyEditor.m_strClassPath != null &&

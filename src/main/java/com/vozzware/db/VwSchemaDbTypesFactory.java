@@ -63,7 +63,7 @@ public class VwSchemaDbTypesFactory
   public static VwSchemaTypeConverter getConverter( int nType  ) throws Exception
   {
      if ( nType < 0 && nType > 3 )
-       throw new Exception( ResourceBundle.getBundle( "com.vozzware.xml.dtd.msgs" ).getString( "Vw.Schema.TypeConverter.InvalidDbType" ) );
+       throw new Exception( ResourceBundle.getBundle( "resources.properties.schemaMsgs" ).getString( "Vw.Schema.TypeConverter.InvalidDbType" ) );
 
      VwSchemaTypeConverter converter = null;
 

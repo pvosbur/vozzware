@@ -64,7 +64,7 @@ public class VwSqlParser
   private int                   m_nStmtType;           // SQL statement type
 
 
-  ResourceBundle m_msgs = ResourceBundle.getBundle( "com.vozzware.db.vwdb" );
+  ResourceBundle m_msgs = ResourceBundle.getBundle( "resources.properties.vwdb" );
 
   private boolean               m_fSqlModified = false; // Set to true if a select * was expanded
   private boolean               m_fExpandSelects = true;  // Expand select * to full column list

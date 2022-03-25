@@ -89,7 +89,7 @@ public class VwDbMgr
   private static Map<String,ClassLoader>         s_mapLoaders = Collections.synchronizedMap( new HashMap<String,ClassLoader>() );
   
    // Load msg bundle
-  private static ResourceBundle s_dbMsgs = ResourceBundle.getBundle( "com.vozzware.db.vwdb" );
+  private static ResourceBundle s_dbMsgs = ResourceBundle.getBundle( "resources.properties.vwdb" );
 
 
   private List<VwDatabase>     m_dbList;       // List of VwDatbase instances

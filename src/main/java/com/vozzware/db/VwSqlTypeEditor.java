@@ -35,7 +35,7 @@ public class VwSqlTypeEditor
 
   static
   {
-    m_msgs = java.util.ResourceBundle.getBundle( "com.vozzware.db.vwdb" );
+    m_msgs = java.util.ResourceBundle.getBundle( "resources.properties.vwdb" );
   }
 
 

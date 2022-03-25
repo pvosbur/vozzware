@@ -100,7 +100,7 @@ public class VwSchemaToJava
 
   private VwCodeSnippetMgr         m_codeSnippetMgr = new VwCodeSnippetMgr();
 
-  private static ResourceBundle s_props = ResourceBundle.getBundle( "com.vozzware.tools.vwtools" );
+  private static ResourceBundle s_props = ResourceBundle.getBundle( "resources.properties.vwtools" );
 
   /**
    * Constructor

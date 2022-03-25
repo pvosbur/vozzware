@@ -176,7 +176,7 @@ public class VwDatabase
     m_dbm = con.getMetaData();
 
     if ( dbMsgs == null )
-      m_dbMsgs = ResourceBundle.getBundle( "com.vozzware.db.vwdb" );
+      m_dbMsgs = ResourceBundle.getBundle( "resources.properties.vwdb" );
     else
       m_dbMsgs = dbMsgs;
       

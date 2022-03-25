@@ -48,7 +48,7 @@ public class VwComponentPropertyPanel extends VwPropBasePanel
   public VwComponentPropertyPanel( VwComponentPropPropertyEditor propEditor )
   {
 
-    m_msgs = ResourceBundle.getBundle( "com.vozzware.ui.ui" );
+    m_msgs = ResourceBundle.getBundle( "resources.properties.ui" );
 
     if ( VwCompNamePropertyEditor.m_strName == null ||
          (VwCompNamePropertyEditor.m_strName != null &&
@@ -116,7 +116,7 @@ public class VwComponentPropertyPanel extends VwPropBasePanel
 
   void m_btnApply_actionPerformed(ActionEvent e)
   {
-    ResourceBundle msgs = ResourceBundle.getBundle( "com.vozzware.ui.ui" );
+    ResourceBundle msgs = ResourceBundle.getBundle( "resources.properties.ui" );
 
     String strClassPath = m_txtClassPath.getText();
     String strPropName = m_txtPropName.getText();

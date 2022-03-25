@@ -219,7 +219,7 @@ public class VwEdit
    */
   public VwEdit()
   {
-    m_msgBundle = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+    m_msgBundle = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
     m_strAllowableChars = null;  // The default setting
 
@@ -245,7 +245,7 @@ public class VwEdit
   public VwEdit( String strMask ) throws Exception,
                                           VwInvalidMaskException
   {
-    m_msgBundle = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+    m_msgBundle = ResourceBundle.getBundle( "resources.properties.vwutil" );
 
     m_strAllowableChars = null;  // The default setting
 

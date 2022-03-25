@@ -26,7 +26,7 @@ package javax.xml.schema.util;
 public class XmlDeSerializerFactory
 {
   /**
-   * Creates the XmlDeSerializer from the name of the implementing class defined the schema.properties file
+   * Creates the XmlDeSerializer from the name of the implementing class defined the schema_en.properties file
    * @return an XmlDeSerializer object
    */
   public static XmlDeSerializer getDeSerializer() throws Exception

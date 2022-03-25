@@ -70,7 +70,7 @@ public class VwDbImport
    */
   public VwDbImport( VwDatabase db, String strExpFileName )  throws Exception
   {
-    m_msgs = ResourceBundle.getBundle( "com.vozzware.db.vwdb" );
+    m_msgs = ResourceBundle.getBundle( "resources.properties.vwdb" );
 
     m_htDirectory = new Hashtable();
 

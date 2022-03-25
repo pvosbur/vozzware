@@ -108,7 +108,7 @@ public class VwComboBox extends JComboBox
 
      try
      {
-       m_msgs = ResourceBundle.getBundle( "com.vozzware.util.vwutil" );
+       m_msgs = ResourceBundle.getBundle( "resources.properties.vwutil" );
      }
      catch( Exception e ){}
 

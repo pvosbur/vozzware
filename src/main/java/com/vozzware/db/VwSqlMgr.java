@@ -201,7 +201,7 @@ public class VwSqlMgr
     m_fPreserveDataObjOrder = fPreserveDataObjOrder;
 
     if ( m_dbMsgs == null )
-      m_dbMsgs = ResourceBundle.getBundle( "com.vozzware.db.vwdb" );
+      m_dbMsgs = ResourceBundle.getBundle( "resources.properties.vwdb" );
 
 
     m_xlateMsgs = db.getDbMgr().getDriverTranslationMsgs();
