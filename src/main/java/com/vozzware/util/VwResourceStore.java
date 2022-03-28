@@ -23,7 +23,7 @@ package com.vozzware.util;
 
 import com.vozzware.ui.VwIcon;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.net.URL;
 import java.util.Collections;

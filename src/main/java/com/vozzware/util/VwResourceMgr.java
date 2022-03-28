@@ -18,7 +18,7 @@ Source Name: VwResourceMgr.java
 
 package com.vozzware.util;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
