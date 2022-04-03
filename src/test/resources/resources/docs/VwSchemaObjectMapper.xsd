@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://vozzware.com/db/util"
+	          xmlns:tns="http://vozzware.com/db/util"
+		        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		        elementFormDefault="qualified"
+		        attributeFormDefault="unqualified">
+	
+  <xsd:complexType name="VwDbObjCommon">
+    <xsd:attribute name="keyGenerationPolicy" use="required" />
+    <xsd:attribute name="sequenceTableName" use="optional" />
+    <xsd:attribute name="sequenceColName" use="optional" />
+    <xsd:attribute name="sequenceType" use="optional" />
+    <xsd:attribute name="sequenceName" use="optional" />
+    <xsd:attribute name="schema" use="optional" />
+    <xsd:attribute name="omitColumns" use="optional" />
+    <xsd:attribute name="inheritClassName" use="optional" />
+    <xsd:attribute name="implementsClassName" use="optional" />
+    <xsd:attribute name="className" use="optional" />
+    <xsd:attribute name="id" use="optional" />
+    <xsd:attribute name="genDvoFromTable" use="optional" />
+    <xsd:attribute name="sqlId" use="optional" />
+    <xsd:attribute name="package" use="optional" />
+    <xsd:attribute name="noDVO" use="optional" />
+    <xsd:attribute name="tableAlias" use="optional" />
+    <xsd:attribute name="extends" use="optional" />
+  </xsd:complexType>
+	
+  <xsd:complexType name="VwConnection">
+    <xsd:attribute name="driverId" use="required" />
+    <xsd:attribute name="driverUrl" use="required" />
+    <xsd:attribute name="uid" use="required" />
+    <xsd:attribute name="pwd" use="required" />
+  </xsd:complexType>
+
+  <xsd:complexType name="VwObjectProperties">
+    <xsd:attribute name="basePath" use="required" />
+    <xsd:attribute name="package" use="required" />
+    <xsd:attribute name="useJavaObjects" default="true" use="optional"  />
+    <xsd:attribute  name="useDirtyObjectDetection" default="true" use="optional"  />
+    <xsd:attribute  name="classPath" use="optional"  />
+    <xsd:attribute  name="superClass" use="optional"  />
+    <xsd:attribute  name="treatChar1AsBoolean" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="VwDAOProperties">
+    <xsd:attribute name="basePath" use="optional" />
+    <xsd:attribute name="package" use="optional" />
+    <xsd:attribute  name="className" use="optional"  />
+    <xsd:attribute  name="extensionClass" use="optional"  />
+    <xsd:attribute  name="useSinglton" use="optional"  />
+    <xsd:attribute  name="typePrefix" use="optional"  />
+    <xsd:attribute  name="typeSuffix" use="optional"  />
+  </xsd:complexType>
+
+  <xsd:complexType name="VwOrm">
+    <xsd:complexContent>
+      <xsd:extension base="tns:VwDbObjCommon">
+	    <xsd:sequence>
+        <xsd:element name="mappingTableConstraint" maxOccurs="unbounded" type="tns:VwMappingTableConstraint"/>
+		    <xsd:element name="finder" maxOccurs="unbounded" type="tns:VwFinder"/>
+		    <xsd:element name="table" maxOccurs="unbounded" type="tns:VwTableSpec"/>
+	    </xsd:sequence>
+	  
+	    <xsd:attribute name="baseTable" use="required" />
+	    <xsd:attribute name="baseRelationshipsOnly" use="optional" />
+	    <xsd:attribute name="baseTableJoin" use="optional" />
+	    <xsd:attribute name="relationshipLevel" use="optional" />
+	    <xsd:attribute name="includeTables" use="optional" />
+	    <xsd:attribute name="excludeTables" use="optional" />
+	    <xsd:attribute name="parentTables" use="optional" />
+	    <xsd:attribute name="omitColumns" use="optional" />
+	  </xsd:extension>
+	 </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwTableSpec">
+    <xsd:complexContent>
+      <xsd:extension base="tns:VwDbObjCommon">
+		<xsd:sequence>
+			<xsd:element name="finder" maxOccurs="unbounded" type="tns:VwFinder"/>
+		</xsd:sequence>
+	    <xsd:attribute name="name" use="required"/>
+	    <xsd:attribute name="includeCols" use="optional"/>
+	    <xsd:attribute name="excludeCols" use="optional"/>
+	    <xsd:attribute name="primaryKeyCols" use="optional"/>
+	 </xsd:extension>
+   </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwFinder">
+    <xsd:sequence>
+       <xsd:element name="mappingTableConstraint" maxOccurs="unbounded" type="tns:VwMappingTableConstraint"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" use="required" />
+    <xsd:attribute name="where" use="required" />
+    <xsd:attribute name="sqlRef" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="VwMappingTableConstraint">
+    <xsd:attribute name="tableName" use="required" />
+    <xsd:attribute name="where" use="required" />
+    <xsd:attribute name="includeCols" use="optional"/>
+    <xsd:attribute name="excludeCols" use="optional"/>
+
+  </xsd:complexType>
+
+  <xsd:complexType name="VwDbSchema">
+    <xsd:complexContent>
+      <xsd:extension base="tns:VwDbObjCommon">
+       <xsd:attribute name="name" use="required" />
+       <xsd:attribute name="includeTables" use="optional" />
+       <xsd:attribute name="excludeTables" use="optional" />
+     </xsd:extension>
+   </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwDbQuery">
+    <xsd:complexContent>
+      <xsd:extension base="tns:VwDbObjCommon">
+	    <xsd:sequence>
+		  <xsd:element name="finder" maxOccurs="unbounded" type="tns:VwFinder"/>
+	    </xsd:sequence>
+      
+        <xsd:attribute name="sql" use="required" />
+ 	 </xsd:extension>
+   </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwProcedure">
+    <xsd:complexContent>
+      <xsd:extension base="tns:VwDbObjCommon">
+        <xsd:attribute name="name" use="required" />
+        <xsd:attribute name="sql" use="optional" />
+        <xsd:attribute name="returnsResultset" use="optional" />
+	 </xsd:extension>
+   </xsd:complexContent>
+  </xsd:complexType>
+	  	
+  <xsd:complexType name="VwSqlMappingSpec">
+	<xsd:sequence>
+		<xsd:element name="connection"  type="tns:VwConnection"/>
+		<xsd:element name="objectProperties"  type="tns:VwObjectProperties"/>
+		<xsd:element name="daoProperties"  type="tns:VwDAOProperties"/>
+		<xsd:element name="specMappings"  maxOccurs="unbounded" type="tns:VwDbObjCommon"/>
+    <xsd:choice maxOccurs="unbounded" collection="specMappings">
+			<xsd:element name="orm"  type="tns:VwOrm"/>
+			<xsd:element name="table" type="tns:VwTableSpec"/>
+			<xsd:element name="schema" type="tns:VwDbSchema"/>
+			<xsd:element name="query" type="tns:VwDbQuery"/>
+			<xsd:element name="proc" type="tns:VwProcedure"/>
+	</xsd:choice>
+	</xsd:sequence>
+    <xsd:attribute name="author" use="optional" />
+    <xsd:attribute name="sqlMappingDocument" use="required" />
+    <xsd:attribute name="primeKeyGenTables" use="required" />
+    <xsd:attribute name="keyGenerationPolicy" use="required" />
+    <xsd:attribute name="sequenceTableName" use="optional" />
+    <xsd:attribute name="sequenceColName" use="optional" />
+    <xsd:attribute name="timestampColName" use="optional" />
+    <xsd:attribute name="sequenceType" use="optional" />
+    <xsd:attribute name="sequenceName" use="optional" />
+    <xsd:attribute name="omitColumns" use="optional" />
+
+  </xsd:complexType>
+
+  <xsd:element name="sqlMappingSpec" type="tns:VwSqlMappingSpec"/>
+
+</xsd:schema>

@@ -1,10 +1,17 @@
 package vozzware.db;
 
+import com.restfb.types.Url;
 import com.vozzware.db.VwDatabase;
 import com.vozzware.db.VwDbMgr;
+import com.vozzware.db.VwSchemaObjectMapper;
+import com.vozzware.util.VwFileUtil;
 import com.vozzware.util.VwLogger;
+import com.vozzware.util.VwResourceMgr;
 import org.junit.Test;
+import org.springframework.util.Assert;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ResourceBundle;
 
 /*
@@ -20,20 +27,21 @@ import java.util.ResourceBundle;
 
 ============================================================================================
 */
-public class TestVwDatabaseMgr
+public class TestVwSchemaObjectMapper
 {
 
 
   @Test
-  public void testDbMgrOpenClose() throws Exception
+  public void testRunSchemaMapper() throws Exception
   {
 
-    VwDbMgr dbMgr = new VwDbMgr( "POSTGRES", "LOCAL", VwLogger.getInstance() );
+    String[] astrArgs = new String[]{ "TestWebDAO.xml", "-g", "-o", "-p", "schemaMapper"};
 
-    VwDatabase db = dbMgr.login( "aiweb", "file:${user.home}/.ai/dbAccess.txt" );
+    VwSchemaObjectMapper.main( astrArgs );
+
+    return;
 
 
-    dbMgr.close();
 
   }
 }

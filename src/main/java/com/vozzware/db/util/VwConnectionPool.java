@@ -30,8 +30,7 @@ public class VwConnectionPool extends VwDVOBase implements Serializable, Cloneab
   private String                 m_strId;                        
   private String                 m_strMin;                       
   private String                 m_strMax;                       
-  private String                 m_strUid;                       
-  private String                 m_strPwd;                       
+  private String m_strCred;
 
   /**
    * Renders bean instance property values to a String
@@ -101,41 +100,25 @@ public class VwConnectionPool extends VwDVOBase implements Serializable, Cloneab
   public String getMax()
   { return m_strMax; }
 
+
+
   /**
-   * Sets the uid property
+   * Sets the credential property
    */
-  public void setUid( String strUid )
+  public void setCred( String strCred )
   { 
     
-    testDirty( "uid", strUid );
-    m_strUid = strUid;
+    testDirty( "cred", strCred );
+    m_strCred = strCred;
   }
 
   /**
-   * Gets uid property
-   * 
-   * @return  The uid property
-   */
-  public String getUid()
-  { return m_strUid; }
-
-  /**
-   * Sets the pwd property
-   */
-  public void setPwd( String strPwd )
-  { 
-    
-    testDirty( "pwd", strPwd );
-    m_strPwd = strPwd;
-  }
-
-  /**
-   * Gets pwd property
+   * Gets credential property
    * 
    * @return  The pwd property
    */
-  public String getPwd()
-  { return m_strPwd; }
+  public String getCred()
+  { return m_strCred; }
 
   /**
    * Clones this object
@@ -148,8 +131,7 @@ public class VwConnectionPool extends VwDVOBase implements Serializable, Cloneab
     classClone.m_strId = m_strId;
     classClone.m_strMin = m_strMin;
     classClone.m_strMax = m_strMax;
-    classClone.m_strUid = m_strUid;
-    classClone.m_strPwd = m_strPwd;
+    classClone.m_strCred = m_strCred;
 
     return classClone;
   }
@@ -184,10 +166,8 @@ public class VwConnectionPool extends VwDVOBase implements Serializable, Cloneab
     if ( ! doObjectEqualsTest( m_strMax, objToTest.m_strMax ) )
       return false; 
 
-    if ( ! doObjectEqualsTest( m_strUid, objToTest.m_strUid ) )
-      return false; 
 
-    if ( ! doObjectEqualsTest( m_strPwd, objToTest.m_strPwd ) )
+    if ( ! doObjectEqualsTest( m_strCred, objToTest.m_strCred ) )
       return false; 
 
     return true;

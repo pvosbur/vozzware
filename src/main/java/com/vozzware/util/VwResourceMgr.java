@@ -18,7 +18,7 @@ Source Name: VwResourceMgr.java
 
 package com.vozzware.util;
 
-import jakarta.servlet.http.HttpSession;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -363,6 +363,24 @@ public class VwResourceMgr
   } // end load
 
   /**
+   * Loads a pro[erties file given the url to a properties file
+   *
+   * @param urlFileProps The url to the file properties to load
+   * @throws Exception
+   */
+  public static synchronized void loadProperties( URL urlFileProps, boolean bMergeKeys, Locale locale ) throws Exception
+  {
+    if ( locale == null )
+    {
+      locale = Locale.getDefault();
+    }
+
+    loadPropsFromUrl( urlFileProps, bMergeKeys, locale );
+
+  } // end loadProperties
+
+
+  /**
    * Loads requested properties file
    * @param strPropertiesFile
    * @param fMergeKeys
@@ -490,13 +508,11 @@ public class VwResourceMgr
   /**
    * @param locale
    * @param strPropertiesFile
-   * @param fMergeKeys
+   * @param bMergeKeys
    */
-  private static void loadProps( Locale locale, String strPropertiesFile, boolean fMergeKeys ) throws Exception
+  private static void loadProps( Locale locale, String strPropertiesFile, boolean bMergeKeys ) throws Exception
   {
-    Map<String,String> mapProperties = null;
-    Properties props = new Properties();
-    File fileProps = new File( strPropertiesFile );
+     File fileProps = new File( strPropertiesFile );
     URL urlProps = null;
     
     if ( !fileProps.exists() )
@@ -513,46 +529,67 @@ public class VwResourceMgr
       urlProps = fileProps.toURI().toURL();
     }
     
+    loadPropsFromUrl( urlProps, bMergeKeys, locale );
+
     
+  } // end load props()
+
+
+  /**
+   * Loads a properties file from a URL
+   *
+   * @param urlProps The url to the properties file to load
+   * @param bMergeKeys  if true merge keys in with an existing properties map
+   * @param locale  The locale
+   *
+   * @throws Exception
+   */
+  private static void loadPropsFromUrl( URL urlProps, boolean bMergeKeys, Locale locale ) throws Exception
+  {
+    Map<String,String> mapProperties = null;
+    Properties props = new Properties();
+
+
     props.load( urlProps.openStream() );
 
-    if ( fMergeKeys )
+    if ( bMergeKeys )
     {
       mapProperties = (Map<String,String>)s_mapPropsByLocale.get( locale );
-      
+
       if ( mapProperties == null )
       {
         mapProperties = Collections.synchronizedMap( new HashMap<String,String>());
         s_mapPropsByLocale.put( locale, mapProperties );
       }
-      
+
     }
     else
     {
-      mapProperties = (Map)s_mapPropsByNameLocale.get( strPropertiesFile );
-      
+      mapProperties = (Map)s_mapPropsByNameLocale.get( urlProps);
+
       if ( mapProperties == null )
       {
         mapProperties = Collections.synchronizedMap( new HashMap());
-        s_mapPropsByNameLocale.put( strPropertiesFile + "_" + locale.toString(), mapProperties );
+        s_mapPropsByNameLocale.put( urlProps + "_" + locale.toString(), mapProperties );
       }
       else
       {
         return;
       }
- 
+
     } // end else
-    
+
+    // Load the properties map
+
     for ( Iterator iKeys = props.keySet().iterator(); iKeys.hasNext(); )
     {
       String strKey = (String)iKeys.next();
-      
+
       mapProperties.put( strKey, props.getProperty( strKey ) );
-      
+
     }
-    
-    
-  } // end load props()
+
+  } // end
 
 
   /**

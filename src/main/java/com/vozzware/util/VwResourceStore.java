@@ -23,7 +23,7 @@ package com.vozzware.util;
 
 import com.vozzware.ui.VwIcon;
 
-import jakarta.servlet.http.HttpSession;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.net.URL;
 import java.util.Collections;
@@ -190,10 +190,14 @@ public class VwResourceStore
 
       }
       else
+      {
         urlDoc =  VwDocFinder.findURL( null, strDocPath + strDocName );
+      }
 
       if ( urlDoc == null )
+      {
         return null;
+      }
 
       s_mapResources.put(strDocName + strDocSuffix, urlDoc );
 
@@ -269,11 +273,15 @@ public class VwResourceStore
   public ResourceBundle getPropertiesAsBundle( String strBundleName, Locale locale )
   {
     if ( locale == null )
+    {
       locale = Locale.getDefault();
+    }
 
     ResourceBundle rb = (ResourceBundle)s_mapResources.get( strBundleName + "_" + locale.toString() );
     if ( rb != null )
+    {
       return rb;
+    }
 
     try
     {

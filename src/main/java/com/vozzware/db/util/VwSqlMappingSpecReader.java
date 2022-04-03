@@ -35,7 +35,7 @@ public class VwSqlMappingSpecReader
    */
   public static VwSqlMappingSpec read( URL urlDoc ) throws Exception
   {
-    URL urlClassgenSchema = VwResourceStoreFactory.getInstance().getStore().getDocument( "VwObjectSQLMapper.xsd" );
+    URL urlClassgenSchema = VwResourceStoreFactory.getInstance().getStore().getDocument( "VwSchemaObjectMapper.xsd" );
      
     VwXmlToBean xtb = new VwXmlToBean();
     xtb.setFeature( XmlDeSerializer.ATTRIBUTE_MODEL, true  );

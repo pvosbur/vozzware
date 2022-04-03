@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://com.vozzware.db.util"
+	       xmlns:tns="http://com.vozzware.db.util"
+		     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		     elementFormDefault="qualified"
+		     attributeFormDefault="unqualified">
+	
+  <xsd:element name="sqlMappingDocument" type="tns:VwSqlMappingDocument"/>
+	
+  <xsd:complexType name="VwSqlMappingDocument">
+	<xsd:sequence>
+		<xsd:element name="sqlMapping" maxOccurs="unbounded" type="tns:VwSqlMapping"/>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwConstraint">
+	<xsd:sequence>
+		<xsd:element name="id" type="xsd:string"/>
+        <xsd:element name="sqlRef" type="xsd:string"/>
+		<xsd:element name="where" minOccurs="0" type="xsd:string"/>
+	  <xsd:element name="mappingConstraints" maxOccurs="unbounded" type="tns:VwMappingTableConstraint"/>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwPrimaryKeyGeneration">
+	<xsd:sequence>
+      <xsd:element name="beanProperty" type="xsd:string"/>
+      <xsd:element name="keyGenerationPolicy" type="xsd:string"/>
+      <xsd:element name="sequenceDataSourceName" type="xsd:string"/>
+	  <xsd:choice>
+        <xsd:element name="sequenceTableName" type="xsd:string"/>
+        <xsd:element name="sequenceName" type="xsd:string"/>
+	  </xsd:choice>
+      <xsd:element name="sequenceColName" type="xsd:string"/>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwKeyDescriptor">
+	<xsd:sequence>
+      <xsd:element name="beanProperty" type="xsd:string"/>
+      <xsd:element name="primeKeyProperty" type="xsd:string"/>
+      <xsd:element name="foreignKeyProperty" type="xsd:string"/>
+	</xsd:sequence>
+  </xsd:complexType>
+
+	<xsd:complexType name="VwExtendsDescriptor">
+	<xsd:sequence>
+      <xsd:element name="superClass" type="xsd:string"/>
+      <xsd:element name="superClassMappingId" type="xsd:string"/>
+      <xsd:element name="superPrimeKeyProperties" maxOccurs="unbounded" type="xsd:string"/>
+      <xsd:element name="primeKeyProperties" maxOccurs="unbounded" type="xsd:string"/>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwSql">
+    <xsd:sequence>
+      <xsd:element name="id" type = "xsd:string"/>
+      <xsd:element name="body" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="VwSqlStatement">
+	<xsd:sequence>
+      <xsd:element name="constraint" maxOccurs="unbounded" type="tns:VwConstraint"/>
+      <xsd:element name="sql" maxOccurs="unbounded" type="tns:VwSql" />
+	</xsd:sequence>
+  </xsd:complexType>
+
+ 
+  <xsd:complexType name="VwSqlMapping">
+	<xsd:sequence>
+	  <xsd:element name="id" type="xsd:string"/>
+    <xsd:element name="className" type="xsd:string"/>
+    <xsd:element name="inheritClassName" type="xsd:string"/>
+    <xsd:element name="implementsClassName" type="xsd:string"/>
+	  <xsd:element name="primaryKeyGeneration" maxOccurs="unbounded" type="tns:VwPrimaryKeyGeneration"/>
+	  <xsd:element name="foreignKey" maxOccurs="unbounded" type="tns:VwKeyDescriptor"/>
+		<xsd:element name="extendsClass" maxOccurs="1" type="tns:VwExtendsDescriptor"/>
+	  <xsd:element name="primaryKeySupplier" maxOccurs="unbounded" type="tns:VwKeyDescriptor"/>
+	  <xsd:element name="insert" 		          type="xsd:string"/>
+	  <xsd:element name="updateBy" 		        type="tns:VwSqlStatement"/>
+	  <xsd:element name="deleteBy" 		        type="tns:VwSqlStatement"/>
+	  <xsd:element name="findBy"  		        type="tns:VwSqlStatement"/>
+	  <xsd:element name="exists"  		        type="tns:VwSqlStatement"/>
+	  <xsd:element name="timestampCheck"  		type="tns:VwSqlStatement"/>
+	  <xsd:element name="query"     	        type="tns:VwSqlStatement"/>
+	  <xsd:element name="proc"     		        type="tns:VwSqlStatement"/>
+	</xsd:sequence>
+  </xsd:complexType>
+  
+</xsd:schema>

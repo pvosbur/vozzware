@@ -26,8 +26,8 @@ public class TestXmlSchemaToJava
   @Test
   public void testXmlSchemaToJava() throws Exception
   {
-    String strPath = "/Users/petervosburgh/dev/VozzWorks/VozzWorks_3.0.3/resources/resources/docs/VwObjectSQLMapper.xsd";
-    //String strPath = "/Users/petervosburgh/dev/VozzWorks/VozzWorks_3.0.3/resources/resources/docs/VwSqlMappingDocument.xsd";
+    String strPath = "/Users/petervosburgh/dev/VozzWorks/VozzWorks_3.0.3/resources/resources/docs/VwSchemaObjectMapper.xsd";
+    //String strPath = "/Users/petervosburgh/dev/VozzWorks/VozzWorks_3.0.3/resources/resources/docs/VwSchemaMappingDocument.xsd";
     File fileSchema = new File( strPath );
 
     VwSchemaToJava stj = new VwSchemaToJava( fileSchema, "/Users/petervosburgh/dev/VozzWorks/VozzWorks_3.0.3/src",
@@ -39,7 +39,7 @@ public class TestXmlSchemaToJava
   @Test
   public void  testGenObjectSqlMapping() throws Exception
   {
-    String strPath = "/Users/petervosburgh/dev/VozzWorks/VozzWorks_3.0.3/resources/resources/docs/VwSqlMappingDocument.xsd";
+    String strPath = "/Users/petervosburgh/dev/VozzWorks/VozzWorks_3.0.3/resources/resources/docs/VwSchemaMappingDocument.xsd";
     File fileSchema = new File( strPath );
 
     VwSchemaToJava stj = new VwSchemaToJava( fileSchema, "/Users/petervosburgh/dev/VozzWorks/VozzWorks_3.0.3/src",

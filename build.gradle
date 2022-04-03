@@ -29,7 +29,7 @@ repositories
 
 dependencies
 {
-  implementation fileTree('lib') {
+  implementation fileTree('../3rdParty') {
     include '*.jar'
   }
 

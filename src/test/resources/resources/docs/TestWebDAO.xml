@@ -1,0 +1,19 @@
+<sqlMappingSpec author="Armored Info LLC"
+                sqlMappingDocument="${project_loc}/src/test/resources/resources/docs/Cr8WebDAO.xsm"
+                keyGenerationPolicy="postgres_seq"
+                sequenceName="%t_PKSeq"
+                omitColumns="date_last_maint">
+
+
+  <objectProperties basepath="./src/test/java" package="com.vozzworks.dao.dvo"
+                    useJavaObjects="true" useDirtyObjectDetection="true"/>
+
+  <daoProperties package="com.ai.aiweb.dao" typePrefix="Ai,Cr8" typeSuffix="PBO"/>
+
+  <table name="cr8web.ai_message_type">
+  </table>
+
+
+
+</sqlMappingSpec>
+

@@ -3,7 +3,7 @@ package com.vozzware.codegen;
 import com.vozzware.codegen.VwClassGen.MethodParams;
 import com.vozzware.db.VwColInfo;
 import com.vozzware.db.VwDatabase;
-import com.vozzware.db.VwObjectSQLMapper;
+import com.vozzware.db.VwSchemaObjectMapper;
 import com.vozzware.db.util.VwConstraint;
 import com.vozzware.db.util.VwDAOProperties;
 import com.vozzware.db.util.VwSql;
@@ -1410,7 +1410,7 @@ public class VwDAOGen
     int ndx = -1;
     for ( VwColInfo ci : listPrimaryKeys )
     {
-      aeTypes[ ++ndx ] = VwObjectSQLMapper.convertSQLType( ci, false, false );
+      aeTypes[ ++ndx ] = VwSchemaObjectMapper.convertSQLType( ci, false, false );
     }
     
     return aeTypes;

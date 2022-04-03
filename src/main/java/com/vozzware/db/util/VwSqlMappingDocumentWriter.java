@@ -80,7 +80,7 @@ public class VwSqlMappingDocumentWriter
    */
   private static VwBeanToXml config( String strCommentHeader ) throws Exception
   {
-    URL urlSchemaXSD = VwResourceStoreFactory.getInstance().getStore().getDocument( "VwSqlMappingDocument.xsd" );
+    URL urlSchemaXSD = VwResourceStoreFactory.getInstance().getStore().getDocument( "VwSchemaMappingDocument.xsd" );
 
     VwBeanToXml btx = new VwBeanToXml( "<?xml version=\"1.0\"?>", null, true, 0 );
     

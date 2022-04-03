@@ -267,7 +267,9 @@ public class VwDbMgr
       VwConnectionPool pool = (VwConnectionPool)iPools.next();
       
       if ( pool.getId().equalsIgnoreCase( url.getPool() ))
+      {
         return pool;
+      }
       
     }
     
@@ -582,6 +584,7 @@ public class VwDbMgr
       throw new Exception( "No connection pool exists. Use createConnectionPool to first setup the pool" );
     }
 
+    
     VwDatabase db = null;
 
     // see if pool is allowed to grow when empty
@@ -802,7 +805,7 @@ public class VwDbMgr
   private  void createConnectionPool( VwConnectionPool pool, List<VwConnectionProperty>listConnectionProperties ) throws Exception
   {
     m_strPoolId = pool.getId();
-   
+
     synchronized( s_mapConnPools )
     {
       VwConnPool connPool = (VwConnPool)s_mapConnPools.get(  pool.getId().toLowerCase() );
@@ -839,18 +842,8 @@ public class VwDbMgr
         m_logger.info( this.getClass(), strInfoMsg );
       }
 
-      m_strUserID = pool.getUid();
-      
-      if ( m_strPassword == null )
-      {
-        m_strPassword = pool.getPwd();
-      }
+      processCredFile( pool.getCred() );
 
-      if ( m_strPassword != null && m_strPassword.startsWith( "file:" ))
-      {
-        m_strPassword = getPasswordInFile( m_strPassword );
-
-      }
 
       connPool.m_propsLogin = new Properties();
       connPool.m_propsLogin.put( "user", m_strUserID );
@@ -898,13 +891,13 @@ public class VwDbMgr
   /**
    * Gets the password from a file
    *
-   * @param strPasswordPath
+   * @param strCredPath
    * @return
    */
-  private String getPasswordInFile( String strPasswordPath ) throws Exception
+  private void processCredFile( String strCredPath ) throws Exception
   {
 
-    String strPath = strPasswordPath.substring( strPasswordPath.indexOf( ":") + 1 );
+    String strPath = strCredPath.substring( strCredPath.indexOf( ":") + 1 );
 
     File filePassword  = new File( VwExString.expandMacro( strPath ) );
 
@@ -913,11 +906,31 @@ public class VwDbMgr
       throw new Exception ("FIle Password: " + strPath + " does not exist or does not have proper access privliges");
     }
 
-    String strPassword = VwFileUtil.readFile( filePassword );
+    URL credUrl = new URL( strCredPath );
 
-    strPassword = VwExString.stripWhitespace( strPassword );
+    Properties propCred = new Properties();
+    propCred.load( credUrl.openStream() );
 
-    return strPassword;
+    m_strUserID  = propCred.getProperty( "uid" );
+
+    if ( m_strUserID ==null )
+    {
+      throw new Exception( "Expected to find uid property key in the file: " + strCredPath + " but got null");
+
+    }
+
+    m_strPassword = propCred.getProperty( "pwd" );
+
+    if ( m_strPassword ==null )
+    {
+      throw new Exception( "Expected to find pwd property key in the file: " + strCredPath + " but got null");
+
+    }
+
+
+    m_strPassword = VwExString.stripWhitespace( m_strPassword );
+
+
   }
 
 
@@ -1387,7 +1400,7 @@ public class VwDbMgr
 
     if ( m_strPassword != null && m_strPassword.startsWith( "file:" ))
     {
-      m_strPassword = getPasswordInFile( m_strPassword );
+      processCredFile( m_strPassword );
     }
 
     if ( m_strUserID == null )         // Alllow for data sources not requiring a a user id
@@ -1454,10 +1467,7 @@ public class VwDbMgr
    */
   public final VwDatabase login() throws Exception
   {
-
-    m_strUserID = "";
-    m_strPassword = "";
-
+    
     try
     {
       Connection con = null;

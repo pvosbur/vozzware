@@ -1,0 +1,30 @@
+<DriverList>
+
+  <driver id="POSTGRES" driverClass="org.postgresql.Driver" desc="Postgres JDBC Driver" connectionTestTable="connect_test">
+
+    <!-- Connection URL's -->
+    <url id="LOCAL" target="jdbc:postgresql://localhost/Cr8Db" pool="cr8Local_pool"/>
+    <url id="SCHEMA_MAPPER" target="jdbc:postgresql://localhost/Cr8Db" pool="cr8SchemaMapper_pool"/>
+    <url id="QA" target="jdbc:postgresql://cr8qadb/Cr8Db" pool="cr8Qa_pool"/>
+    <url id="UAT" target="jdbc:postgresql://cr8devdb/UAT" pool="cr8UAT_pool"/>
+    <url id="DEV" target="jdbc:postgresql://cr8devdb/Cr8Db" pool="cr8Dev_pool"/>
+    
+    <url id="SANDBOX" target="jdbc:postgresql://a67183b9-ba66-4761-a264-a017bd540f1a.btdkfu0w0p0vutjk0r9g.private.databases.appdomain.cloud:31804/Cr8Db" pool="cr8Sandbox_pool">
+      <connectionProperty name="ApplicationName" value="CR8"/>
+    </url>
+
+
+    <url id="PROD" target="jdbc:postgresql://cr8prddb/Cr8Db" pool="cr8Prod_pool"/>
+
+    <!-- Connection Pool settings -->
+    <connectionPool id="cr8Local_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/cred.properties"/>
+    <connectionPool id="cr8SchemaMapper_pool" min="1" max="1" cred="file:///var/cr8web/.cred/cred.properties"/>
+    <connectionPool id="cr8Qa_pool" min="60" max="100" cred="file:///var/cr8web/.cred/cred.properties"/>
+    <connectionPool id="cr8UAT_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/cred.properties"/>
+    <connectionPool id="cr8Dev_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/cred.properties"/>
+    <connectionPool id="cr8Sandbox_pool" min="5" max="10" cred="file:///var/cr8web/.cred/cred.properties"/>
+    <connectionPool id="cr8Prod_pool" min="60" max="100" cred="file:///var/cr8web/.cred/cred.properties"/>
+
+  </driver>
+
+</DriverList>

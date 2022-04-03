@@ -34,7 +34,7 @@ public class VwSqlMappingDocumentReader
    */
   public static VwSqlMappingDocument read( URL urlDoc ) throws Exception
   {
-    URL urlClassgenSchema = VwResourceStoreFactory.getInstance().getStore().getDocument( "VwSqlMappingDocument.xsd" );
+    URL urlClassgenSchema = VwResourceStoreFactory.getInstance().getStore().getDocument( "VwSchemaMappingDocument.xsd" );
      
     VwXmlToBean xtb = new VwXmlToBean();
         
