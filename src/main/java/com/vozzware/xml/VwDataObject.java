@@ -420,7 +420,7 @@ public class VwDataObject implements VwServiceable
    */
   public void add( String strID, boolean fVal ) throws Exception, VwDupValueException
   {
-    VwElement element = new VwElement( strID, new Boolean( fVal ) );
+    VwElement element = new VwElement( strID, Boolean.valueOf( fVal ) );
     add( element );
 
   } // end add()

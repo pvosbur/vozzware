@@ -26,8 +26,8 @@ package com.vozzware.db;
  import com.vozzware.db.util.VwUrl;
  import com.vozzware.util.VwDelimString;
  import com.vozzware.util.VwExString;
- import com.vozzware.util.VwFileUtil;
  import com.vozzware.util.VwLogger;
+ import com.vozzware.util.VwPropertiesProcessor;
  import com.vozzware.util.VwResourceStoreFactory;
  import com.vozzware.util.VwStack;
  import com.vozzware.xml.VwDataObject;
@@ -110,6 +110,7 @@ public class VwDbMgr
   private String                m_strVendorDriverName;   // Driver name
   private String                m_strDataSourceName;   // Driver name
   private String                m_strPoolId;             // Name of connection pool id for this instance (if defined)
+  private String                m_strCred;             // Name of connection pool id for this instance (if defined)
   private DatabaseMetaData      m_dbMetaData;            // Metdata class for this driver
 
   private VwDriverTranslationMsgs m_xlateMsgs;     // Active driver error msg xlation class
@@ -235,6 +236,10 @@ public class VwDbMgr
     if ( url.getPool() != null )
     {
       createConnectionPool( findPool( driver, url ), url.getConnectionProperty() );
+    }
+    else
+    {
+      m_strCred = url.getCred();
     }
     
   } // end VwDbMgr()
@@ -899,19 +904,9 @@ public class VwDbMgr
 
     String strPath = strCredPath.substring( strCredPath.indexOf( ":") + 1 );
 
-    File filePassword  = new File( VwExString.expandMacro( strPath ) );
 
-    if ( !filePassword.exists() )
-    {
-      throw new Exception ("FIle Password: " + strPath + " does not exist or does not have proper access privliges");
-    }
-
-    URL credUrl = new URL( strCredPath );
-
-    Properties propCred = new Properties();
-    propCred.load( credUrl.openStream() );
-
-    m_strUserID  = propCred.getProperty( "uid" );
+    VwPropertiesProcessor pp = new VwPropertiesProcessor( new URL( strCredPath ) );
+    m_strUserID  = pp.getString( "uid" );
 
     if ( m_strUserID ==null )
     {
@@ -919,7 +914,7 @@ public class VwDbMgr
 
     }
 
-    m_strPassword = propCred.getProperty( "pwd" );
+    m_strPassword = pp.getString( "pwd" );
 
     if ( m_strPassword ==null )
     {
@@ -1397,12 +1392,7 @@ public class VwDbMgr
       m_logger.debug( this.getClass(), "CREATING DATABASE CONNECTION");
 
     }
-
-    if ( m_strPassword != null && m_strPassword.startsWith( "file:" ))
-    {
-      processCredFile( m_strPassword );
-    }
-
+    
     if ( m_strUserID == null )         // Alllow for data sources not requiring a a user id
     {
       m_strUserID = "";                // or password
@@ -1487,6 +1477,12 @@ public class VwDbMgr
       if ( m_strPoolId != null )
       {
         return getPooledDatabase();
+      }
+      else
+      if ( m_strCred != null )
+      {
+        processCredFile( m_strCred );
+        return login( m_strUserID, m_strPassword );
       }
       else
       {

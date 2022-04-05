@@ -176,9 +176,13 @@ public class VwDatabase
     m_dbm = con.getMetaData();
 
     if ( dbMsgs == null )
+    {
       m_dbMsgs = ResourceBundle.getBundle( "resources.properties.vwdb" );
+    }
     else
+    {
       m_dbMsgs = dbMsgs;
+    }
       
 
     m_SQLTypeCvtr = sqlTypeConverter;
@@ -187,7 +191,9 @@ public class VwDatabase
     String strDbName = m_dbm.getDatabaseProductName();
     
     if ( strDbName.toLowerCase().indexOf( "mysql" ) >= 0 )
+    {
       m_fTreatCatalogsAsSchemas = true;
+    }
     
     
   } // end VwDatabase()

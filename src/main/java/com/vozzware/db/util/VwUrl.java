@@ -32,8 +32,9 @@ public class VwUrl extends VwDVOBase implements Serializable, Cloneable
 
   private String                 m_strId;                        
   private String                 m_strTarget;                    
-  private String                 m_strPool;                      
-  private List<VwConnectionProperty>  m_listConnectionProperty;       
+  private String                 m_strPool;
+  private String                 m_strCred;
+  private List<VwConnectionProperty>  m_listConnectionProperty;
 
   /**
    * Renders bean instance property values to a String
@@ -104,6 +105,24 @@ public class VwUrl extends VwDVOBase implements Serializable, Cloneable
   { return m_strPool; }
 
   /**
+   * Sets the pool property
+   */
+  public void setCred( String strCred )
+  {
+
+    testDirty( "cred", strCred );
+    m_strCred = strCred;
+  }
+
+  /**
+   * Gets pool property
+   *
+   * @return  The pool property
+   */
+  public String getCred()
+  { return m_strCred; }
+
+  /**
    * Sets the connectionProperty property
    */
   public void setConnectionProperty( List<VwConnectionProperty> listConnectionProperty )
@@ -132,6 +151,9 @@ public class VwUrl extends VwDVOBase implements Serializable, Cloneable
     classClone.m_strId = m_strId;
     classClone.m_strTarget = m_strTarget;
     classClone.m_strPool = m_strPool;
+    classClone.m_strId = m_strId;
+    classClone.m_strTarget = m_strTarget;
+    classClone.m_strCred = m_strCred;
 
     if ( m_listConnectionProperty  != null )
       classClone.m_listConnectionProperty = (List<VwConnectionProperty>)cloneList( m_listConnectionProperty );
@@ -200,7 +222,10 @@ public class VwUrl extends VwDVOBase implements Serializable, Cloneable
       return false; 
 
     if ( ! doObjectEqualsTest( m_strPool, objToTest.m_strPool ) )
-      return false; 
+      return false;
+
+    if ( ! doObjectEqualsTest( m_strCred, objToTest.m_strCred ) )
+      return false;
 
     if ( ! doListElementTest( m_listConnectionProperty, objToTest.m_listConnectionProperty ) )
       return false;

@@ -48,13 +48,13 @@ public class VwLogAppenderPWAPushImpl extends AbstractAppender
   private String        m_strLogCategory;
   private String        m_strBackupLogProperties;
   private String        m_strInstanceName;
-  private PushService m_pushService;
-  private Subscription m_subscription;
+  private PushService   m_pushService;
+  private Subscription  m_subscription;
   private String        m_strMsgHdrs;
 
   private boolean       m_bEnabled;
 
-  private VwLogger m_backupLogger;
+  private VwLogger      m_backupLogger;
 
   protected VwLogAppenderPWAPushImpl( String strInstanceName, boolean bEnabled, String name, Filter filter,
                                       Layout<? extends Serializable> layout, final boolean ignoreExceptions ) throws Exception

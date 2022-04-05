@@ -4,7 +4,6 @@
 
     <!-- Connection URL's -->
     <url id="LOCAL" target="jdbc:postgresql://localhost/Cr8Db" pool="cr8Local_pool"/>
-    <url id="SCHEMA_MAPPER" target="jdbc:postgresql://localhost/Cr8Db" pool="cr8SchemaMapper_pool"/>
     <url id="QA" target="jdbc:postgresql://cr8qadb/Cr8Db" pool="cr8Qa_pool"/>
     <url id="UAT" target="jdbc:postgresql://cr8devdb/UAT" pool="cr8UAT_pool"/>
     <url id="DEV" target="jdbc:postgresql://cr8devdb/Cr8Db" pool="cr8Dev_pool"/>
@@ -13,17 +12,19 @@
       <connectionProperty name="ApplicationName" value="CR8"/>
     </url>
 
-
     <url id="PROD" target="jdbc:postgresql://cr8prddb/Cr8Db" pool="cr8Prod_pool"/>
 
+    <!-- SchemsObjectMapper urls -->
+    <url id="SCHEMA_MAPPER_LOCAL" target="jdbc:postgresql://localhost/Cr8Db" cred="file:///var/cr8web/.cred/localCred.properties"/>
+    <url id="SCHEMA_MAPPER_DEV" target="jdbc:postgresql://cr8devdb/Cr8Db" cred="file:///var/cr8web/.cred/devCred.properties"/>
+
     <!-- Connection Pool settings -->
-    <connectionPool id="cr8Local_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/cred.properties"/>
-    <connectionPool id="cr8SchemaMapper_pool" min="1" max="1" cred="file:///var/cr8web/.cred/cred.properties"/>
-    <connectionPool id="cr8Qa_pool" min="60" max="100" cred="file:///var/cr8web/.cred/cred.properties"/>
-    <connectionPool id="cr8UAT_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/cred.properties"/>
-    <connectionPool id="cr8Dev_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/cred.properties"/>
-    <connectionPool id="cr8Sandbox_pool" min="5" max="10" cred="file:///var/cr8web/.cred/cred.properties"/>
-    <connectionPool id="cr8Prod_pool" min="60" max="100" cred="file:///var/cr8web/.cred/cred.properties"/>
+    <connectionPool id="cr8Local_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/localCred.properties"/>
+    <connectionPool id="cr8Qa_pool" min="60" max="100" cred="file:///var/cr8web/.cred/qaCred.properties"/>
+    <connectionPool id="cr8UAT_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/uatCred.properties"/>
+    <connectionPool id="cr8Dev_pool" min="5" max="10"  cred="file:///var/cr8web/.cred/devcred.properties"/>
+    <connectionPool id="cr8Sandbox_pool" min="5" max="10" cred="file:///var/cr8web/.cred/sandboxCred.properties"/>
+    <connectionPool id="cr8Prod_pool" min="60" max="100" cred="file:///var/cr8web/.cred/prodCred.properties"/>
 
   </driver>
 

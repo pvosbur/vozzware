@@ -40,6 +40,7 @@
 			<xsd:attribute name="id" type="xsd:string"/>
 			<xsd:attribute name="target" type="xsd:string"/>
 			<xsd:attribute name="pool" type="xsd:string"/>
+			<xsd:attribute name="cred" type="xsd:string"/>
 
 		</xsd:complexType>
 

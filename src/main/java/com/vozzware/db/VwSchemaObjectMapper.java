@@ -469,6 +469,8 @@ public class VwSchemaObjectMapper
     }
     
     writeXSMDocument();
+
+    m_db.close();
     
     
   }
@@ -806,22 +808,25 @@ public class VwSchemaObjectMapper
   private void setupDatabase() throws Exception
   {
 
-    if ( m_strDbConfigProps.startsWith( "file:" ))
+    VwResourceMgr.loadProperties( m_strDbConfigProps, false );
+
+    // we areb not merging keys for the propert file name + the ':' must precede the actual property key
+    String strBundleKey =  m_strDbConfigProps;
+
+    if ( !strBundleKey.endsWith( ".properties" ))
     {
-      VwResourceMgr.loadProperties( m_strDbConfigProps, true );
-    }
-    else
-    {
-      VwResourceMgr.loadBundle( m_strDbConfigProps,true );
+      strBundleKey += ".properties";
     }
 
-    String strDriverName = VwResourceMgr.getString( "driverName", (Locale)null, null );
+    strBundleKey += ":";
+
+    String strDriverName = VwResourceMgr.getString( strBundleKey + "driverName", (Locale)null, null );
     if ( strDriverName == null )
     {
       throw new Exception( "Missing <driverName> property in " + m_strDbConfigProps);
     }
 
-    String strDriverUrlId = VwResourceMgr.getString( "driverUrlId", (Locale)null, null );
+    String strDriverUrlId = VwResourceMgr.getString(strBundleKey + "driverUrlId", (Locale)null, null );
     if ( strDriverUrlId == null )
     {
       throw new Exception( "Missing <driverUrlId> property in \" + m_strDbConfigProps" );
@@ -1115,7 +1120,9 @@ public class VwSchemaObjectMapper
     finally
     {
       if ( m_sqlMgr != null )
+      {
         m_sqlMgr.close();
+      }
     }
 
   } // end genCode()
@@ -3291,6 +3298,7 @@ public class VwSchemaObjectMapper
 
     List<VwForeignKeyInfo> listForeignKeys = m_db.getForeignKeys( null, null, strTableName );
 
+
     if ( listForeignKeys.size() == 0 )
     {
       throw new Exception( "Table: " + strTableName + " must define a foreign key to its super table: " + strExtendsTable );
@@ -4210,7 +4218,9 @@ public class VwSchemaObjectMapper
       boolean fDAOXMLOnly = false;
       boolean fGenDAO = false;
       boolean fOverwriteXsm = false;
+
       String  strMappingProperties= null;
+      String strEnv = null;
 
 
       String  strIncludes = null;
@@ -4259,6 +4269,11 @@ public class VwSchemaObjectMapper
             strIncludes = astrArgs[ ++x ];
           }
           else
+          if ( astrArgs[ x ].equals( "-e"))
+          {
+            strEnv = astrArgs[ ++x ];
+          }
+          else
           {
            showArgs();
            return;
@@ -4269,16 +4284,31 @@ public class VwSchemaObjectMapper
 
       if ( strMappingProperties == null )
       {
-         VwLogger.getInstance().error( null, "You cannot specify the -p option path to the schemaMapping.properties file" );
+         VwLogger.getInstance().error( null, "You must specify the -p option path to the schemaMapping.properties file" );
          System.exit( -1 );
 
       }
+
       if ( fDVOOnly && fDAOXMLOnly )
       {
         VwLogger.getInstance().error( null, "You cannot specify both the -x (XML generation only and -d (DVO generation only ) options" );
         System.exit( -1 );
       }
+
+      if ( strEnv == null )
+      {
+        strEnv = "LOCAL";
+
+        VwLogger.getInstance().info( null, "The -e (environment) was not specified,  Assuming LOCAL" );
+      }
+      else
+      {
+        VwLogger.getInstance().info( null, "VwSchemaObjectMapper will use the '" + strEnv + "' database evironment" );
+
+      }
       
+      System.setProperty( "VwEnv", strEnv );
+
       VwSchemaObjectMapper dbcg = new VwSchemaObjectMapper();
 
       URL urlSpecDoc = VwResourceStoreFactory.getInstance().getStore().getDocument( astrArgs[ 0 ] );

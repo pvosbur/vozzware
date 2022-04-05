@@ -6,6 +6,7 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +38,8 @@ public class VwLoggerJMX
 
   }
 
-   public void init() throws Exception
+  @PostConstruct
+  public void init() throws Exception
   {
     String[] astrInstanceNames = getInstanceNames();
 

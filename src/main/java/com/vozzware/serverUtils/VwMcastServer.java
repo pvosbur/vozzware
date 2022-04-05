@@ -51,7 +51,7 @@ public class VwMcastServer extends Thread
 
   private  String             m_strMulticastAddress = VwResourceMgr.getString( "server.multicast.address");
 
-  private VwLogger m_logger;
+  private VwLogger            m_logger;
 
   private VwServerNotificationHandler m_notificationHandler;
 

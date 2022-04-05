@@ -1,4 +1,4 @@
-package test.vozzware.util;
+package vozzware.util;
 
 import com.vozzware.util.VwLogger;
 import org.apache.logging.log4j.Level;
@@ -23,11 +23,13 @@ public class VwLoggerTester
     public void testRollingLogs() throws Exception
     {
 
+      System.out.println( "in testRollingLogs");
       //VwLogger logger1 = VwLogger.getInstance( "junit1.properties" );
       VwLogger logger = VwLogger.getInstance( "junitDb.properties" );
 
       logger.clearLog();
 
+      logger.error( this.getClass(), "FUCKING Error" );
       //logger1.info( "Info THis");
       //logger1.error( this.getClass(), "MyError");
 

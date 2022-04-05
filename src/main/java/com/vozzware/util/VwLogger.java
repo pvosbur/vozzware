@@ -3,9 +3,9 @@ package com.vozzware.util;
 import com.vozzware.serverUtils.VwServerUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Layout;
+import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.appender.FileAppender;
@@ -100,7 +100,7 @@ public class VwLogger
 
   private static  String    s_strDefaultPattern = "%-5p, [%d{dd MMM yyyy HH:mm:ss SSS}], %m, %rEx{full}\n"; // The default message pattern
 
-  private static  Map<String, Level> s_mapLevels = new HashMap<String, Level>();
+  private static  Map<String, Level> s_mapLevels = new HashMap<String,Level>();
 
   private static  Map<String,VwLogger> s_mapInstances = Collections.synchronizedMap( new HashMap<String, VwLogger>() );
 
@@ -110,8 +110,8 @@ public class VwLogger
   {
     s_mapLevels.put( "trace", Level.TRACE );
     s_mapLevels.put( "debug", Level.DEBUG );
-    s_mapLevels.put( "info", Level.INFO );
-    s_mapLevels.put( "warn", Level.WARN );
+    s_mapLevels.put( "info",  Level.INFO );
+    s_mapLevels.put( "warn",  Level.WARN );
     s_mapLevels.put( "error", Level.ERROR );
     s_mapLevels.put( "fatal", Level.FATAL );
 
@@ -525,7 +525,7 @@ public class VwLogger
     AppenderRef ref = AppenderRef.createAppenderRef( "File", null, null);
     AppenderRef[] refs = new AppenderRef[] {ref};
     m_loggerConfig = LoggerConfig.createLogger( "false", Level.INFO, m_strInstanceName,
-                                                "true", refs, null, m_config, null );
+        "true", refs, null, m_config, null );
 
     String strKey = m_strInstanceName + ":";
 
@@ -593,10 +593,10 @@ public class VwLogger
     */
    private void configureDefaults( Exception ex ) throws Exception
    {
-     AppenderRef ref = AppenderRef.createAppenderRef( "File", null, null);
+     AppenderRef ref = AppenderRef.createAppenderRef("File", null, null);
      AppenderRef[] refs = new AppenderRef[] {ref};
      m_loggerConfig = LoggerConfig.createLogger( "false", Level.INFO, m_strInstanceName,
-                                                 "true", refs, null, m_config, null );
+         "true", refs, null, m_config, null );
 
      String strKey = m_strInstanceName + ":";
 
@@ -628,7 +628,8 @@ public class VwLogger
    */
   protected void createConsoleAppender() throws Exception
   {
-    Appender appConsole = ConsoleAppender.createAppender( m_instanceLayout, null, null, "CONSOLE_APPENDER", false, true );
+    //Appender appConsole = ConsoleAppender.createAppender( m_instanceLayout, null, null, "CONSOLE_APPENDER", false, true );
+    Appender appConsole = ConsoleAppender.createDefaultAppenderForLayout( m_instanceLayout );
     appConsole.start();
 
     m_config.addAppender( appConsole );

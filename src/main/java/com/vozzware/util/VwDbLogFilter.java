@@ -1,6 +1,10 @@
 package com.vozzware.util;
 
-import org.apache.log4j.spi.Filter;
+import org.apache.logging.log4j.core.LogEvent;
+
+import java.util.logging.Filter;
+import java.util.logging.LogRecord;
+
 
 /*
 ============================================================================================
@@ -15,16 +19,16 @@ import org.apache.log4j.spi.Filter;
 
 ============================================================================================
 */
-public class VwDbLogFilter extends Filter
+public class VwDbLogFilter implements Filter
 {
 
   @Override
-  public int decide(org.apache.log4j.spi.LoggingEvent loggingEvent)
+  public boolean isLoggable( LogRecord loggingEvent)
   {
     Object objMessage = loggingEvent.getMessage();
-    String strRenderedMsg = loggingEvent.getRenderedMessage();
+    String strRenderedMsg = loggingEvent.getMessage();
 
-    return Filter.ACCEPT;
+    return true;
 
   }
 

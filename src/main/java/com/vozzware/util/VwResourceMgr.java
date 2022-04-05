@@ -512,7 +512,7 @@ public class VwResourceMgr
    */
   private static void loadProps( Locale locale, String strPropertiesFile, boolean bMergeKeys ) throws Exception
   {
-     File fileProps = new File( strPropertiesFile );
+    File fileProps = new File( strPropertiesFile );
     URL urlProps = null;
     
     if ( !fileProps.exists() )
@@ -565,12 +565,17 @@ public class VwResourceMgr
     }
     else
     {
-      mapProperties = (Map)s_mapPropsByNameLocale.get( urlProps);
+      String strFilePath = urlProps.getFile();
+      int nPos = strFilePath.lastIndexOf( "/" ) + 1;
+
+      String strPropFileName = strFilePath.substring( nPos );
+      
+      mapProperties = (Map)s_mapPropsByNameLocale.get( strPropFileName  );
 
       if ( mapProperties == null )
       {
         mapProperties = Collections.synchronizedMap( new HashMap());
-        s_mapPropsByNameLocale.put( urlProps + "_" + locale.toString(), mapProperties );
+        s_mapPropsByNameLocale.put( strPropFileName + "_" + locale.toString(), mapProperties );
       }
       else
       {
@@ -585,7 +590,7 @@ public class VwResourceMgr
     {
       String strKey = (String)iKeys.next();
 
-      mapProperties.put( strKey, props.getProperty( strKey ) );
+      mapProperties.put( strKey, VwExString.expandMacro( props.getProperty( strKey ) ));
 
     }
 
