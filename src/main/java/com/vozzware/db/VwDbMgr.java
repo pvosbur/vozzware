@@ -902,8 +902,6 @@ public class VwDbMgr
   private void processCredFile( String strCredPath ) throws Exception
   {
 
-    String strPath = strCredPath.substring( strCredPath.indexOf( ":") + 1 );
-
 
     VwPropertiesProcessor pp = new VwPropertiesProcessor( new URL( strCredPath ) );
     m_strUserID  = pp.getString( "uid" );

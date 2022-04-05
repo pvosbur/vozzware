@@ -41,12 +41,12 @@ public class VwPropertiesProcessor
     }
     catch( FileNotFoundException fne )
     {
-      throw new Exception ("Path to properties file: " + urlProps.getFile().substring(3 ) + " does not exist" );
+      throw new Exception ("Path to properties file: " + urlProps.getFile() + " does not exist" );
 
     }
     catch( Exception ex )
     {
-      throw new Exception ("Error opening url tp properties file: " + urlProps.getFile().substring(3 ) + "Reason: " + ex.getMessage() );
+      throw new Exception ("Error opening url tp properties file: " + urlProps.getFile() + "Reason: " + ex.getMessage() );
 
     }
 
